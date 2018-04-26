@@ -13,8 +13,11 @@ D:\GIT\Kronen\Kronen.web\bin\Debug\netcoreapp2.0\Kronen.runtimeconfig.json
 D:\GIT\Kronen\Kronen.web\bin\Debug\netcoreapp2.0\Kronen.runtimeconfig.dev.json
 D:\GIT\Kronen\Kronen.web\bin\Debug\netcoreapp2.0\Kronen.dll
 D:\GIT\Kronen\Kronen.web\bin\Debug\netcoreapp2.0\Kronen.pdb
+D:\GIT\Kronen\Kronen.web\bin\Debug\netcoreapp2.0\Kronen.lib.dll
+D:\GIT\Kronen\Kronen.web\bin\Debug\netcoreapp2.0\Kronen.lib.pdb
 D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.csproj.CoreCompileInputs.cache
 D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.AssemblyInfoInputs.cache
 D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.AssemblyInfo.cs
+D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.csproj.CopyComplete
 D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.dll
 D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.pdb

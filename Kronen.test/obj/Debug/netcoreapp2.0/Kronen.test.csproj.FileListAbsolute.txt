@@ -6,8 +6,13 @@ D:\GIT\Kronen\Kronen.test\bin\Debug\netcoreapp2.0\Kronen.test.runtimeconfig.json
 D:\GIT\Kronen\Kronen.test\bin\Debug\netcoreapp2.0\Kronen.test.runtimeconfig.dev.json
 D:\GIT\Kronen\Kronen.test\bin\Debug\netcoreapp2.0\Kronen.test.dll
 D:\GIT\Kronen\Kronen.test\bin\Debug\netcoreapp2.0\Kronen.test.pdb
+D:\GIT\Kronen\Kronen.test\bin\Debug\netcoreapp2.0\Kronen.dll
+D:\GIT\Kronen\Kronen.test\bin\Debug\netcoreapp2.0\Kronen.lib.dll
+D:\GIT\Kronen\Kronen.test\bin\Debug\netcoreapp2.0\Kronen.pdb
+D:\GIT\Kronen\Kronen.test\bin\Debug\netcoreapp2.0\Kronen.lib.pdb
 D:\GIT\Kronen\Kronen.test\obj\Debug\netcoreapp2.0\Kronen.test.csproj.CoreCompileInputs.cache
 D:\GIT\Kronen\Kronen.test\obj\Debug\netcoreapp2.0\Kronen.test.AssemblyInfoInputs.cache
 D:\GIT\Kronen\Kronen.test\obj\Debug\netcoreapp2.0\Kronen.test.AssemblyInfo.cs
+D:\GIT\Kronen\Kronen.test\obj\Debug\netcoreapp2.0\Kronen.test.csproj.CopyComplete
 D:\GIT\Kronen\Kronen.test\obj\Debug\netcoreapp2.0\Kronen.test.dll
 D:\GIT\Kronen\Kronen.test\obj\Debug\netcoreapp2.0\Kronen.test.pdb
