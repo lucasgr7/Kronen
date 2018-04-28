@@ -12289,6 +12289,7 @@
     ".NETCoreApp,Version=v2.0": [
       "Kronen.lib >= 1.0.0",
       "Microsoft.AspNetCore.All >= 2.0.7",
+      "Microsoft.AspNetCore.WebSockets >= 2.0.2",
       "Microsoft.NETCore.App >= 2.0.0"
     ]
   },
@@ -12338,6 +12339,10 @@
           "Microsoft.AspNetCore.All": {
             "target": "Package",
             "version": "[2.0.7, )"
+          },
+          "Microsoft.AspNetCore.WebSockets": {
+            "target": "Package",
+            "version": "[2.0.2, )"
           },
           "Microsoft.NETCore.App": {
             "target": "Package",

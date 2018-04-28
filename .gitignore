@@ -28,6 +28,8 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
+obj/
+bin/
 *.dll
 *.pdb
 

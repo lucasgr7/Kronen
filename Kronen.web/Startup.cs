@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
+using System.Threading;
 using System.Threading.Tasks;
+using Kronen.web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,6 +41,27 @@ namespace Kronen
             }
 
             app.UseStaticFiles();
+            app.UseWebSockets();
+            app.Use(async (context, next) =>
+{
+            if (context.Request.Path == "/ws")
+            {
+                if (context.WebSockets.IsWebSocketRequest)
+                {
+                    WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                    await ChatService.Echo(context, webSocket);
+                }
+                else
+                {
+                    context.Response.StatusCode = 400;
+                }
+            }
+            else
+            {
+                await next();
+            }
+
+        });
 
             app.UseMvc(routes =>
             {
@@ -45,5 +70,6 @@ namespace Kronen
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
     }
 }

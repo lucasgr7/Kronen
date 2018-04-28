@@ -20,7 +20,7 @@ namespace Kronen.Controllers
             if(nome == null || string.IsNullOrEmpty(nome)){
                 return View("LoginInvalido");
             }
-            return View();
+            return View("Lobby");
         }
 
         public IActionResult About()
