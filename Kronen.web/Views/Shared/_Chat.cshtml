@@ -1,0 +1,112 @@
+@model VMChat
+
+    <div ng-app="chatApp">
+        <div ng-controller="chatAppController">
+            <input type="hidden" id="userName" name="userName" value='@Model.userName' >
+            <h3>@Model.chatName Chat Room</h3>
+            <p>{{status}}</p>
+
+            <ol ng-repeat="m in messages track by $index">
+                <li><b>{{m.from}}:</b> {{m.message}}</li>
+            </ol>
+            <form>
+                <label for="sendMessage">Message:</label>
+                <input ng-model="txtSendMessage" id="sendMessage" disabled />
+                <button id="sendButton" ng-click="sendMessage()" type="submit" disabled>Send</button>
+            </form>
+        </div>
+    </div>
+    
+
+    <script>
+        var chatApp = angular.module('chatApp', []);
+        chatApp.controller('chatAppController',function($scope){
+            var scheme = document.location.protocol == "https:" ? "wss" : "ws";
+            var port = document.location.port ? (":" + document.location.port) : "";
+            var socket;
+
+            $scope.userName = $("#userName").val();
+            $scope.messages = [];
+            $scope.status = "Sem conexão";
+            $scope.connectionUrl = scheme + "://" + document.location.hostname + port + '@Model.urlSocket';
+            $scope.init = function(){
+                $scope.status = "Conectando...";
+                socket = new WebSocket($scope.connectionUrl);
+                socket.onopen = function (event) {
+                    updateState();
+                    console.log("Conexão aberta");
+                };
+                socket.onclose = function (event) {
+                    updateState();
+                    console.log("Conexão fechada" + event.code + " Motivo: " + event.reason);
+                };
+                socket.onerror = updateState;
+                socket.onmessage = function (event) {
+                    $scope.messages.push(JSON.parse(event.data));
+                    $scope.$apply();
+                    console.log(event.data);
+                };
+            }
+            function updateState() {
+                function disable() {
+                    sendMessage.disabled = true;
+                    sendButton.disabled = true;
+                }
+                function enable() {
+                    sendMessage.disabled = false;
+                    sendButton.disabled = false;
+                }
+                if (!socket) {
+                    disable();
+                } else {
+                    switch (socket.readyState) {
+                        case WebSocket.CLOSED:
+                            $scope.status = "Closed";
+                            disable();
+                            connectionUrl.disabled = false;
+                            break;
+                        case WebSocket.CLOSING:
+                            $scope.status = "Closing...";
+                            disable();
+                            break;
+                        case WebSocket.CONNECTING:
+                            $scope.status = "Connecting...";
+                            disable();
+                            break;
+                        case WebSocket.OPEN:
+                            $scope.status = "Open";
+                            enable();
+                            break;
+                        default:
+                            $scope.status = "Unknown WebSocket State: " + htmlEscape(socket.readyState);
+                            disable();
+                            break;
+                    }
+                }
+            }
+            $scope.sendMessage = function () {
+                if (!socket || socket.readyState != WebSocket.OPEN) {
+                    alert("socket not connected");
+                }
+                if($scope.txtSendMessage != ""){
+                    var data = {
+                        from : $scope.userName ,
+                        to: '',
+                        message: $scope.txtSendMessage
+                    };
+                    socket.send(JSON.stringify(data));
+                    $scope.txtSendMessage = "";
+                }
+            }
+            
+            function htmlEscape(str) {
+                return str
+                    .replace(/&/g, '&amp;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+            }
+            $scope.init();
+        });
+    </script>

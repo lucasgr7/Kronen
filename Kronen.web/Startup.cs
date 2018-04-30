@@ -5,6 +5,7 @@ using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Kronen.web.Services;
+using Kronen.web.Services.Contract;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -25,7 +26,11 @@ namespace Kronen
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc()
+            .AddSessionStateTempDataProvider();
+            services.AddSession();
+
+            services.AddScoped<IGameRoomService, GameRoomService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,10 +45,11 @@ namespace Kronen
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            
             app.UseStaticFiles();
             app.UseWebSockets();
-            app.Use(async (context, next) =>
-{
+            app.UseSession();
+            app.Use(async (context, next) =>{
             if (context.Request.Path == "/ws")
             {
                 if (context.WebSockets.IsWebSocketRequest)
