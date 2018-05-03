@@ -1,0 +1,45 @@
+
+<!-- Modal -->
+<div id="modalCreateGame" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <form id="formCreateRoom" action="/home/CreateRoom" method="POST">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Criar um novo jogo</h4>
+      </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-4">
+                    <label for="roomName">
+                        Nome da sala
+                    </label>
+                    <input class="form-control" type="text" name="roomName" id="roomName" />
+                </div>
+                <div class="col-xs-4">
+                    <div class="radio">
+                        <label><input type="radio" name="numberPlayers" value="2">2 Jogadores</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" name="numberPlayers" value="4">4 Jogadores</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" name="numberPlayers" value="6">6 Jogadores</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" name="numberPlayers" value="8">8 Jogadores</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input type="submit" value="Criar" />
+            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

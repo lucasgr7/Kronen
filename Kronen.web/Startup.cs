@@ -26,11 +26,10 @@ namespace Kronen
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSession();
+            services.AddScoped<IGameRoomService, GameRoomService>();
             services.AddMvc()
             .AddSessionStateTempDataProvider();
-            services.AddSession();
-
-            services.AddScoped<IGameRoomService, GameRoomService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,7 +47,7 @@ namespace Kronen
             
             app.UseStaticFiles();
             app.UseWebSockets();
-            app.UseSession();
+            app.UseSession(); 
             app.Use(async (context, next) =>{
             if (context.Request.Path == "/ws")
             {
@@ -69,12 +68,9 @@ namespace Kronen
 
         });
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
+            app.UseDeveloperExceptionPage();
+            app.UseMvcWithDefaultRoute();
         }
 
     }

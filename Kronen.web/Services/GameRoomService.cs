@@ -46,6 +46,9 @@ namespace Kronen.web.Services
             return response;
         }
         public List<GameRoom> getAllAvailableRooms(){
+            if(GameRepository.gameRooms == null)
+                return new List<GameRoom>();
+                
             return GameRepository.gameRooms.Where(x => !x.isPlaying).ToList();
         }
         public enum Errors{

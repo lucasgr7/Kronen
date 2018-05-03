@@ -19,8 +19,7 @@
     
 
     <script>
-        var chatApp = angular.module('chatApp', []);
-        chatApp.controller('chatAppController',function($scope){
+        kronenApp.controller('chatAppController',function($scope){
             var scheme = document.location.protocol == "https:" ? "wss" : "ws";
             var port = document.location.port ? (":" + document.location.port) : "";
             var socket;
