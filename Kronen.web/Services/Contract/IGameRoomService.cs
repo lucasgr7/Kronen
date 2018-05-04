@@ -8,5 +8,6 @@ namespace Kronen.web.Services.Contract
     {
          DtoCreateGameResponse CreateGame(DtoCreateGameRequest dto);
          List<GameRoom> getAllAvailableRooms();
+         GameRoom GetRoom(long id);
     }
 }

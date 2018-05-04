@@ -63,13 +63,30 @@ namespace Kronen.Controllers
             if(responseService.ExistErrors()){
                 return View("Error");
             }
-            VMGameRoom vm = new VMGameRoom(){
-                name = responseService.room.name,
-                NumberPlayers = responseService.room.NumberPlayers,
-                gameId = responseService.room.gameId
-            };
-            return View("GameRoom", vm);
+            return RedirectToAction("EnterRoom", new {id = responseService.room.gameId});
         }
+        [Route("home/room/{id}")]
+        public IActionResult EnterRoom(long id){
+            if(id == 0){
+                return Index();
+            }
+            var room = gameRoomService.GetRoom(id);
+            if(room != null){
+                if(!room.isPlaying){
+                    VMGameRoom vm = new VMGameRoom(){
+                        name = room.name,
+                        NumberPlayers = room.NumberPlayers,
+                        gameId = room.gameId
+                    };
+                    return View("GameRoom", vm);
+                }else{
+                    return View("ErroGenerico", null);
+                }
+            }else{
+                return View("ErroGenerico", null);
+            }
+        }
+
 
     }
 }
