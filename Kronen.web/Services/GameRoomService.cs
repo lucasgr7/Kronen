@@ -34,11 +34,9 @@ namespace Kronen.web.Services
                 gameId = gameId,
                 name = dto.NameRoom,
                 NumberPlayers = dto.NumberPlayers,
-                players = new List<Player>(){
-                    new Player(){
-                        id = dto.Creator.id,
-                        name = dto.Creator.name
-                    }
+                Creator = new Player(){
+                    id = dto.Creator.id,
+                    name = dto.Creator.name
                 }
             });
 

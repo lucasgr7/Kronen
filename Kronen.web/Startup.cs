@@ -67,6 +67,26 @@ namespace Kronen
             }
 
         });
+            app.Use(async (context, next) =>{
+            if (context.Request.Path.StartsWithSegments("/ws/room"))
+            {
+                if (context.WebSockets.IsWebSocketRequest)
+                {
+                    long id = long.Parse(context.Request.Path.ToString().Replace("/ws/room/", ""));
+                    WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                    await ChatService.EchoRoom(context, webSocket, id);
+                }
+                else
+                {
+                    context.Response.StatusCode = 400;
+                }
+            }
+            else
+            {
+                await next();
+            }
+
+        });
 
             app.UseMvc();
             app.UseDeveloperExceptionPage();

@@ -70,13 +70,19 @@ namespace Kronen.Controllers
             if(id == 0){
                 return Index();
             }
+            Player user = JsonConvert.DeserializeObject<Player>(HttpContext.Session.GetString("user"));
             var room = gameRoomService.GetRoom(id);
             if(room != null){
                 if(!room.isPlaying){
                     VMGameRoom vm = new VMGameRoom(){
                         name = room.name,
                         NumberPlayers = room.NumberPlayers,
-                        gameId = room.gameId
+                        gameId = room.gameId,
+                        chatRoom = new VMChat(){
+                            urlSocket = "/ws/room/"+ id.ToString(),
+                            chatName = "Lobby",
+                            userName = user.name
+                        }
                     };
                     return View("GameRoom", vm);
                 }else{

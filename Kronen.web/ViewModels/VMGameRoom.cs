@@ -8,5 +8,6 @@ namespace Kronen.ViewModels
         public long gameId {get;set;}
         public string name {get;set;}
         public int NumberPlayers {get;set;}
+        public VMChat chatRoom {get;set;}
     }
 }
