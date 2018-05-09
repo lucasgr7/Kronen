@@ -13,6 +13,11 @@ namespace Kronen.lib.Dto
         public bool ExistErrors(){
             return Errors != null && Errors.Any();
         }
+        public List<KronenError> getErrors(){
+            if(this.Errors == null)
+                this.Errors = new List<KronenError>();
+            return this.Errors;
+        }
         public bool Success { get { return !ExistErrors(); } }
         
         public KronenError AddError<T>(T erro, Exception ex)

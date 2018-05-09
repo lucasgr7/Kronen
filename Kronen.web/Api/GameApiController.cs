@@ -18,11 +18,12 @@ namespace Kronen.Api
         public DtoConsultaGameResponse ConsultaGameResponse(DtoConsultaGameRequest dto){
             var response = new DtoConsultaGameResponse();
             var games = service.getAllAvailableRooms();
-            response.gamesAvailable = games.Select(x => new DtoConsultaGameResponse.Game(){
-                gameId = x.gameId,
-                name = x.name,
-                players = ChatService.RoomsSockets.Where(y => y.RoomId == x.gameId).Count() + "/" +  x.NumberPlayers.ToString() 
-            }).ToList();
+            if(games != null)
+                response.gamesAvailable = games.Select(x => new DtoConsultaGameResponse.Game(){
+                    gameId = x.gameId,
+                    name = x.name,
+                    players = ChatService.RoomsSockets.Where(y => y.RoomId == x.gameId).Count() + "/" +  x.NumberPlayers.ToString() 
+                }).ToList();
             return response;
         }
     }

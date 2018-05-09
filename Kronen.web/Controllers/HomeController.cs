@@ -12,6 +12,8 @@ using Kronen.web.Persistence.Domain;
 using Newtonsoft.Json;
 using Kronen.web.Services.Contract;
 using Kronen.web.Services.Contract.Dto;
+using Kronen.web.Services;
+using Kronen.lib.Dto;
 
 namespace Kronen.Controllers
 {
@@ -46,6 +48,17 @@ namespace Kronen.Controllers
             }));
             return View("Lobby", vm);
         }
+        public IActionResult Lobby(){
+            Player user = JsonConvert.DeserializeObject<Player>(HttpContext.Session.GetString("user"));
+            VMLobby vm = new VMLobby(){
+                chatRoom = new VMChat(){
+                    urlSocket = "/ws",
+                    chatName = "Lobby",
+                    userName = user.name
+                }
+            };
+            return View("Lobby", vm);
+        }
 
         public IActionResult CreateRoom([FromForm] DtoCriarSalaRequest dto)
         {
@@ -61,10 +74,12 @@ namespace Kronen.Controllers
             };
             var responseService = gameRoomService.CreateGame(dtoRequest);
             if(responseService.ExistErrors()){
-                return View("Error");
+                return ShowError("Erro ao gerar a sala", responseService.getErrors());
             }
             return RedirectToAction("EnterRoom", new {id = responseService.room.gameId});
         }
+
+
         [Route("home/room/{id}")]
         public IActionResult EnterRoom(long id){
             if(id == 0){
@@ -72,27 +87,42 @@ namespace Kronen.Controllers
             }
             Player user = JsonConvert.DeserializeObject<Player>(HttpContext.Session.GetString("user"));
             var room = gameRoomService.GetRoom(id);
+
             if(room != null){
                 if(!room.isPlaying){
-                    VMGameRoom vm = new VMGameRoom(){
-                        name = room.name,
-                        NumberPlayers = room.NumberPlayers,
-                        gameId = room.gameId,
-                        chatRoom = new VMChat(){
-                            urlSocket = "/ws/room/"+ id.ToString(),
-                            chatName = "Lobby",
-                            userName = user.name
-                        }
-                    };
-                    return View("GameRoom", vm);
-                }else{
-                    return View("ErroGenerico", null);
+                    var playersInRoom = ChatService.RoomsSockets.Where(x => x.RoomId == id).Count();
+                    if(playersInRoom < room.NumberPlayers){
+                        VMGameRoom vm = new VMGameRoom(){
+                            name = room.name,
+                            NumberPlayers = room.NumberPlayers,
+                            gameId = room.gameId,
+                            chatRoom = new VMChat(){
+                                urlSocket = "/ws/room/"+ id.ToString(),
+                                chatName = "Lobby",
+                                userName = user.name
+                            }
+                        };
+                        return View("GameRoom", vm);
+                    }else
+                    {
+                        return ShowError("Sala ja se encontrada lotada de jogadores!");
+                    }
+                }
+                else
+                {
+                    return ShowError("Partida iniciada, naõ é possível assisti-la ainda!");
                 }
             }else{
-                return View("ErroGenerico", null);
+                return ShowError("Sala da partida não pode ser nulo!");
             }
         }
-
-
+        private ViewResult ShowError(string message){
+            return View("_ErroGenerico", new VMErroGenerico{ mensagem = message });
+        }
+        private IActionResult ShowError(string v, List<KronenError> list)
+        {
+            var messageErrors = v + " - " + string.Join("; ", list.Select(x => x.message));
+            return View("_ErroGenerico", new VMErroGenerico{ mensagem = messageErrors });
+        }
     }
 }

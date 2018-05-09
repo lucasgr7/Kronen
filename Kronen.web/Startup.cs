@@ -44,6 +44,8 @@ namespace Kronen
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            if(ChatService.RoomsSockets == null)
+                ChatService.RoomsSockets = new List<RoomWebSocket>();
             
             app.UseStaticFiles();
             app.UseWebSockets();
