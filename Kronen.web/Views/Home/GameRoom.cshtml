@@ -3,9 +3,76 @@
 
 @model VMGameRoom
 
-
-<h1>@Model.name</h1>
-<i>Sala número: @Model.gameId</i>
-<p>Número de jogaodres: @Model.NumberPlayers</p>
+<div ng-controller="gameRoomController">
+    <h1>@Model.name</h1>
+    <i>Sala número: {{gameId}}</i>
+    <p>Número de jogaodres: {{numberPlayers}}</p>
+    <div id="painelJogadores">
+        <ul>
+            <li ng-repeat="j in jogadores">
+                {{j.name}} 
+                <label class="label label-success" ng-show="j.isReady">Pronto</label>
+                <label class="label label-warning" ng-show="!j.isReady">Aguardando...</label>
+            </li>
+        </ul>
+    </div>
+    <button ng-disabled="ready" ng-click="setMeReady(true)" class="btn btn-danger">Estou Pronto</button>
+</div>
 
 @Html.Partial("../Shared/_Chat.cshtml", @Model.chatRoom)
+
+<script>
+    kronenApp.controller('gameRoomController',function($scope, $http){
+        $scope.gameId = @Model.gameId;
+        $scope.playerId = '@Model.playerId';
+        $scope.numberPlayers = @Model.numberPlayers;
+        var onGoing = false;
+        $scope.ready = false;
+
+        setInterval(function(){
+            if(!onGoing)
+                consultaStatusJogadores();
+        }, 3000);
+
+        function consultaStatusJogadores(){
+            onGoing = true;
+            $http.get('/api/room/?id=' + $scope.gameId,{}).then(function(ret){
+                onGoing = false;
+                if(ret.Errors == null && ret.data != null){
+                    $scope.jogadores = ret.data.jogadores;
+                    var jogadoresProntos = $scope.jogadores.filter((x) =>{
+                        return x.isReady == true;
+                    });
+                    if(jogadoresProntos.length === $scope.numberPlayers)
+                    {
+                        window.location = "/game/" + $scope.gameId;
+                    }
+                }else{
+                    alert(ret.Errors);
+                }
+                console.log(ret.data);
+            });
+        };
+        $scope.setMeReady = function(status){
+            debugger;
+            $http.post('/api/room/',
+            {
+                PlayerId: $scope.playerId,
+                RoomId: $scope.gameId,
+                status: status
+            }).then(function(ret){
+                onGoing = false;
+                if(ret.Errors == null && ret.data != null){
+                    $scope.ready = true;
+                }else{
+                    alert(ret.Errors);
+                }
+                console.log(ret.data);
+            });
+        }
+           
+    });
+</script>
+
+//todo: Criar painel para mostrar jogadores online
+//todo: Criar botão para "I'm Ready"

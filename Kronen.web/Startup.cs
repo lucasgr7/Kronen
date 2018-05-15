@@ -74,9 +74,11 @@ namespace Kronen
             {
                 if (context.WebSockets.IsWebSocketRequest)
                 {
-                    long id = long.Parse(context.Request.Path.ToString().Replace("/ws/room/", ""));
+                    var paths = context.Request.Path.ToString().Split("/");
+                    long id = long.Parse(paths[3]);
+                    string userId = paths[4].ToString();
                     WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                    await ChatService.EchoRoom(context, webSocket, id);
+                    await ChatService.EchoRoom(context, webSocket, id, userId);
                 }
                 else
                 {

@@ -21,3 +21,4 @@ D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.AssemblyInfo.cs
 D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.csproj.CopyComplete
 D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.dll
 D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.pdb
+D:\GIT\Kronen\Kronen.web\obj\Debug\netcoreapp2.0\Kronen.csprojResolveAssemblyReference.cache

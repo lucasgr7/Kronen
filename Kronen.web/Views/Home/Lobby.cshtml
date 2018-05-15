@@ -3,28 +3,26 @@
 
 @model VMLobby
 
-<div ng-app="lobbyGamesApp">
-    <div ng-controller="lobbyGameController">
-        <h2>Bem vindo ao Kronen</h2>
-        <p>Escolha um jogo</p>
-        <table class="table table-bordered">
-            <thead>
-                <th>Game ID</th>
-                <th>Nome</th>
-                <th>Jogadores</th>
-                <th>#</th>
-            </thead>
-            <tbody>
-                <tr ng-repeat="g in gamesAvailable">
-                    <td>{{g.gameId}}</td>
-                    <td>{{g.name}}</td>
-                    <td>{{g.players}}</td>
-                    <td><a href="/home/room/{{g.gameId}}">Entrar</a></td>
-                </tr>
-            </tbody>
-        </table>
-        <button class="btn btn-danger" data-toggle="modal" data-target="#modalCreateGame">Criar novo jogo</button>
-    </div>
+<div ng-controller="lobbyGameController">
+    <h2>Bem vindo ao Kronen</h2>
+    <p>Escolha um jogo</p>
+    <table class="table table-bordered">
+        <thead>
+            <th>Game ID</th>
+            <th>Nome</th>
+            <th>Jogadores</th>
+            <th>#</th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="g in gamesAvailable">
+                <td>{{g.gameId}}</td>
+                <td>{{g.name}}</td>
+                <td>{{g.players}}</td>
+                <td><a href="/home/room/{{g.gameId}}">Entrar</a></td>
+            </tr>
+        </tbody>
+    </table>
+    <button class="btn btn-danger" data-toggle="modal" data-target="#modalCreateGame">Criar novo jogo</button>
 </div>
 <script>
     kronenApp.controller('lobbyGameController', function($scope, $http){

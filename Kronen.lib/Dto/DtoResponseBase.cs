@@ -20,21 +20,25 @@ namespace Kronen.lib.Dto
         }
         public bool Success { get { return !ExistErrors(); } }
         
-        public KronenError AddError<T>(T erro, Exception ex)
+        public void AddError<T>(T erro, Exception ex)
             where T : struct
         {
-            return AddError(erro, ex.Message);
+            AddError(erro, ex.Message);
         }
-        public KronenError AddError<T>(T erro, string message)
+        public void AddError<T>(T erro, string message)
             where T : struct
         {
-            return AddError(erro, string.Empty);
+            if(this.Errors == null)
+                this.Errors = new List<KronenError>();
+            this.Errors.Add(new KronenError(){
+                message = message
+            });
         }
 
-        public KronenError AddError<T>(T erro)
+        public void AddError<T>(T erro)
             where T : struct
         {
-            return AddError(erro, string.Empty);
+            AddError(erro, string.Empty);
         }
         
     }

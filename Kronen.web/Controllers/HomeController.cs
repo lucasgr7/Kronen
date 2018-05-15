@@ -14,6 +14,7 @@ using Kronen.web.Services.Contract;
 using Kronen.web.Services.Contract.Dto;
 using Kronen.web.Services;
 using Kronen.lib.Dto;
+using Kronen.web.Persistence;
 
 namespace Kronen.Controllers
 {
@@ -42,10 +43,16 @@ namespace Kronen.Controllers
                 }
             };
             var playerId = Guid.NewGuid().ToString();
-            HttpContext.Session.SetString("user",JsonConvert.SerializeObject(new Player{
+            if(GameRepository.ActivePlayers== null)
+                GameRepository.ActivePlayers = new List<Player>();
+
+            var player = new Player{
                 id = playerId,
                 name = nome
-            }));
+            };
+            
+            GameRepository.ActivePlayers.Add(player);
+            HttpContext.Session.SetString("user",JsonConvert.SerializeObject(player));
             return View("Lobby", vm);
         }
         public IActionResult Lobby(){
@@ -90,14 +97,15 @@ namespace Kronen.Controllers
 
             if(room != null){
                 if(!room.isPlaying){
-                    var playersInRoom = ChatService.RoomsSockets.Where(x => x.RoomId == id).Count();
-                    if(playersInRoom < room.NumberPlayers){
+                    var playersInRoom = ChatService.RoomsSockets.Where(x => x.RoomId == id).ToList();
+                    if(playersInRoom.Count < room.NumberPlayers){
                         VMGameRoom vm = new VMGameRoom(){
                             name = room.name,
-                            NumberPlayers = room.NumberPlayers,
+                            numberPlayers = room.NumberPlayers,
                             gameId = room.gameId,
+                            playerId = user.id,
                             chatRoom = new VMChat(){
-                                urlSocket = "/ws/room/"+ id.ToString(),
+                                urlSocket = "/ws/room/"+ id.ToString() + "/" + user.id,
                                 chatName = "Lobby",
                                 userName = user.name
                             }

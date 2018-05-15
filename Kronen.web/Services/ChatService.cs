@@ -32,13 +32,17 @@ namespace Kronen.web.Services
             LobbySockets.Remove(webSocket);
             await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
         }
-        public static async Task EchoRoom(HttpContext context, WebSocket webSocket, long id)
+        public static async Task EchoRoom(HttpContext context, WebSocket webSocket, long idRoom, string idPlayer)
         {
             if(RoomsSockets==null)
                 RoomsSockets = new List<RoomWebSocket>();
             var roomSocket = new RoomWebSocket(){
                 socket = webSocket,
-                RoomId = id
+                RoomId = idRoom,
+                Player = new RoomPlayer{
+                    Id = idPlayer,
+                    IsReady = false
+                }
             };
             RoomsSockets.Add(roomSocket);
 
@@ -46,7 +50,7 @@ namespace Kronen.web.Services
             WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             while (!result.CloseStatus.HasValue)
             {
-                var rooms = RoomsSockets.Where(x => x.RoomId == id).ToList();
+                var rooms = RoomsSockets.Where(x => x.RoomId == idRoom).ToList();
                 foreach(var room in rooms){
                     await room.socket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
                 }
@@ -60,5 +64,10 @@ namespace Kronen.web.Services
     public class RoomWebSocket{
         public WebSocket socket {get;set;}
         public long RoomId {get;set;}
+        public RoomPlayer Player {get;set;}
+    }
+    public class RoomPlayer{
+        public string Id {get;set;}
+        public bool IsReady {get;set;}
     }
 }
