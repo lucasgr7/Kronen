@@ -35,3 +35,8 @@ bin/
 
 # Visual Studio 2015
 .vs/
+Kronen.web/bin/Debug/netcoreapp2.0/Kronen.dll
+Kronen.web/bin/Debug/netcoreapp2.0/Kronen.pdb
+Kronen.web/obj/Debug/netcoreapp2.0/Kronen.dll
+Kronen.web/obj/Debug/netcoreapp2.0/Kronen.pdb
+Kronen.web/obj/Debug/netcoreapp2.0/Kronen.csproj.CoreCompileInputs.cache
