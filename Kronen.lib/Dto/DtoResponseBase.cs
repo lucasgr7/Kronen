@@ -40,6 +40,14 @@ namespace Kronen.lib.Dto
         {
             AddError(erro, string.Empty);
         }
+        public void AddError(List<KronenError> erros)
+        {
+            if(this.Errors == null)
+                this.Errors = new List<KronenError>();
+            erros.ForEach(x => {
+                this.Errors.Add(x);
+            });
+        }
         
     }
 }

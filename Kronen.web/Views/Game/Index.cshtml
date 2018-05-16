@@ -1,3 +1,56 @@
-<h1>
-    Hora do jogo!
-</h1>
+<div ng-controller="controller">
+    <div style="float:left">
+            <div ng-repeat="carta in cartas track by $index" ng-show="cartas_roubadas.length === 0"  ng-class="{ 'red' : isRed(carta)}" class="carta" 
+                data-drag="{{carta.drag}}" ng-model="cartas" data-jqyoui-options="{revert: 'invalid'}" 
+                jqyoui-draggable="{index: {{$index}},placeholder:true,animate:true}" ng-mouseenter="setCarta(carta)" >
+                    <span class="valor" >{{carta.valor}}</span>
+                    <span class="naipe">{{carta.naipe.simbolo}}</span>
+            </div>
+            <div ng-repeat="carta in cartas_roubadas track by $index" ng-show="cartas_roubadas.length > 0" ng-class="{ 'red' : isRed(carta)}" class="carta" 
+                data-drag="{{carta.drag}}" ng-model="cartas_roubadas" data-jqyoui-options="{revert: 'invalid'}" 
+                jqyoui-draggable="{index: {{$index}},placeholder:true,animate:true}">
+                    <span class="valor" >{{carta.valor}}</span>
+                    <span class="naipe">{{carta.naipe.simbolo}}</span>
+            </div>
+    </div>
+    <div style="float:left; padding: 35px">
+        <div  class="painel-jogador" ng-repeat="jogador in jogadores track by $index">
+            <div>
+                <div>
+                    <p>Valor: {{jogador.pick}}</p>
+                    <rzslider rz-slider-model="jogador.pick.valor" rz-slider-options="valoresSliderOptions.optionsValor">
+                </div>
+                <div>
+                    <p>Naipe</p>
+                    <rzslider rz-slider-model="jogador.pick.naipe" rz-slider-options="valoresSliderOptions.optionsNaipe">
+                </div>
+                <button ng-click="setCoringa()">Ok</button>
+            </div>
+            <div>
+                <h3>{{jogador.totalPontos}}</h3>
+                Pontuações: {{jogador.pontuacoes}}
+            </div>
+            <table>
+            
+                    <thead>
+                        <th ng-repeat="coluna in jogador.colunas">
+                            {{$index}}
+                        </th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="coluna in jogador.colunas"  >
+                            <td class="tile" ng-repeat="linha in coluna.linhas" jqyoui-droppable="{onDrop: 'cardPlaced(e)'}" 
+                            data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' data-number="{{linha.number}}" data-player_id={{jogador.id}} >
+                                <div ng-repeat="carta in linha.data"   ng-class="{ 'red' : isRed(carta)}" class="carta" >                                            
+                                    <span class="valor" >{{carta.valor}}</span>
+                                    <span class="naipe">{{carta.naipe.simbolo}}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+        
+    </div>
+    {{lista}}
+</div>

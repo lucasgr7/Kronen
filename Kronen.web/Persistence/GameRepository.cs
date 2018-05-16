@@ -7,5 +7,7 @@ namespace Kronen.web.Persistence
     {
         public static List<GameRoom> gameRooms {get;set;}
         public static List<Player> ActivePlayers {get;set;}
+        public static List<Game> Jogos {get;set;}
+        
     }
 }

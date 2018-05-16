@@ -28,6 +28,7 @@ namespace Kronen
         {
             services.AddSession();
             services.AddScoped<IGameRoomService, GameRoomService>();
+            services.AddScoped<IGameService, GameService>();
             services.AddMvc()
             .AddSessionStateTempDataProvider();
         }
