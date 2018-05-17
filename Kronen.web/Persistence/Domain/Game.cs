@@ -9,6 +9,7 @@ namespace Kronen.web.Persistence.Domain
         public List<Tabuleiro> Tabuleiros {get;set;}
         public List<Card> CartasVisiveis {get;set;}
         public List<Card> Baralho {get;set;}
+        public string ActivePlayer {get;set;}
         
     }
 }

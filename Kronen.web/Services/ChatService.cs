@@ -68,6 +68,7 @@ namespace Kronen.web.Services
     }
     public class RoomPlayer{
         public string Id {get;set;}
+        public string Name {get;set;}
         public bool IsReady {get;set;}
     }
 }

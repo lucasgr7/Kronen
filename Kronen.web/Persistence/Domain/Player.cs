@@ -6,5 +6,6 @@ namespace Kronen.web.Persistence.Domain
     {
         public string id {get;set;}
         public string name {get;set;}
+        public short order {get;set;}
     }
 }

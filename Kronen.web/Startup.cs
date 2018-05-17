@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Kronen.web.Persistence;
+using Kronen.web.Persistence.Domain;
 using Kronen.web.Services;
 using Kronen.web.Services.Contract;
 using Microsoft.AspNetCore.Builder;
@@ -47,6 +49,8 @@ namespace Kronen
 
             if(ChatService.RoomsSockets == null)
                 ChatService.RoomsSockets = new List<RoomWebSocket>();
+            if(GameRepository.Jogos == null)
+                GameRepository.Jogos = new List<Game>();
             
             app.UseStaticFiles();
             app.UseWebSockets();

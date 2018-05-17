@@ -27,6 +27,9 @@ namespace Kronen.web.Api
                 isReady = roomSockets.Where(y => y.Player.Id == x.id).Select(y => y.Player.IsReady).First(),
                 name = x.name
             }).ToList();
+            var jogoAtivo = GameRepository.Jogos.Where(x => x.GameId == id).FirstOrDefault();
+            if(jogoAtivo!= null)
+                response.gameReady = true;
             return Ok(response);
         }
         [HttpPost]
@@ -36,12 +39,23 @@ namespace Kronen.web.Api
                 response.AddError(TipoErro.DtoInvalido);
                 return BadRequest(response);
             }
-            if(string.IsNullOrEmpty(dto.PlayerId)){
+            if(string.IsNullOrEmpty(dto.player.id)){
                 response.AddError(TipoErro.PlayerIdInvalido);
                 return BadRequest(response);
             }
-            var websocket = ChatService.RoomsSockets.Where(x => x.Player.Id == dto.PlayerId && x.RoomId == dto.RoomId).FirstOrDefault();
-            websocket.Player.IsReady = dto.Status;
+            var websocket = ChatService.RoomsSockets.Where(x => x.Player.Id == dto.player.id && x.RoomId == dto.roomId).FirstOrDefault();
+            websocket.Player.IsReady = dto.status;
+            var jogo = GameRepository.gameRooms.Where(x => x.gameId == dto.roomId).FirstOrDefault();
+            if(jogo != null){
+                if(jogo.Players == null)
+                    jogo.Players = new List<Player>();
+                jogo.Players.Add(new Player(){
+                    id = dto.player.id,
+                    name = dto.player.name
+                });
+            }else{
+                response.AddError(TipoErro.JogoNaoExiste);
+            }
             return Ok(response);
         }
     }
@@ -51,6 +65,8 @@ namespace Kronen.web.Api
         [Description("Dto invalido")]
         DtoInvalido = 2,
         [Description("Player ID invalido")]
-        PlayerIdInvalido = 3
+        PlayerIdInvalido = 3,
+        [Description("Jogo não existe ainda")]
+        JogoNaoExiste = 4
     }
 }

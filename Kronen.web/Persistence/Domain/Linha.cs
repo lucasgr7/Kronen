@@ -6,6 +6,6 @@ namespace Kronen.web.Persistence.Domain
     {
         public short Posicao {get;set;}
         public long Number {get;set;}
-        public List<dynamic> Data {get;set;}
+        public List<Card> Data {get;set;}
     }
 }

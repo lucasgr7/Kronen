@@ -1,46 +1,96 @@
+@using Kronen
+@using Kronen.Models
+
+@model VMGame
+todo: Royal Straight zuado Resolver bug das cartas repetidas
+todo: Bloquear cartas para quem não é o turno
+
 <div ng-controller="controller">
-    <div style="float:left">
-            <div ng-repeat="carta in cartas track by $index" ng-show="cartas_roubadas.length === 0"  ng-class="{ 'red' : isRed(carta)}" class="carta" 
-                data-drag="{{carta.drag}}" ng-model="cartas" data-jqyoui-options="{revert: 'invalid'}" 
-                jqyoui-draggable="{index: {{$index}},placeholder:true,animate:true}" ng-mouseenter="setCarta(carta)" >
+    <div style="float:left" ng-disabled="dadosPartida.activePlayer !== jogadorId">
+            <div ng-repeat="carta in cartas track by $index" ng-show="cartas_roubadas.length === 0"  ng-class="{ 'red' : isRed(carta)}" 
+            class="carta" data-drag="{{carta.drag}}" ng-model="cartas" data-jqyoui-options="{revert: 'invalid'}" 
+            jqyoui-draggable="{index: {{$index}},placeholder:true,animate:true}" ng-mouseenter="setCarta(carta)" >
                     <span class="valor" >{{carta.valor}}</span>
                     <span class="naipe">{{carta.naipe.simbolo}}</span>
             </div>
-            <div ng-repeat="carta in cartas_roubadas track by $index" ng-show="cartas_roubadas.length > 0" ng-class="{ 'red' : isRed(carta)}" class="carta" 
-                data-drag="{{carta.drag}}" ng-model="cartas_roubadas" data-jqyoui-options="{revert: 'invalid'}" 
-                jqyoui-draggable="{index: {{$index}},placeholder:true,animate:true}">
+            <div ng-repeat="carta in cartas_roubadas track by $index" ng-show="cartas_roubadas.length > 0" ng-class="{ 'red' : isRed(carta)}" 
+              class="carta" data-drag="{{carta.drag}}" ng-model="cartas_roubadas" data-jqyoui-options="{revert: 'invalid'}" 
+              jqyoui-draggable="{index: {{$index}},placeholder:true,animate:true}">
                     <span class="valor" >{{carta.valor}}</span>
                     <span class="naipe">{{carta.naipe.simbolo}}</span>
             </div>
     </div>
     <div style="float:left; padding: 35px">
-        <div  class="painel-jogador" ng-repeat="jogador in jogadores track by $index">
-            <div>
+        <div  class="painel-jogador">
+            <!-- <div>
                 <div>
-                    <p>Valor: {{jogador.pick}}</p>
-                    <rzslider rz-slider-model="jogador.pick.valor" rz-slider-options="valoresSliderOptions.optionsValor">
+                    <p>Valor: {{tabuleiroPartida.pick}}</p>
+                    <rzslider rz-slider-model="tabuleiroPartida.pick.valor" rz-slider-options="valoresSliderOptions.optionsValor">
                 </div>
                 <div>
                     <p>Naipe</p>
-                    <rzslider rz-slider-model="jogador.pick.naipe" rz-slider-options="valoresSliderOptions.optionsNaipe">
+                    <rzslider rz-slider-model="tabuleiroPartida.pick.naipe" rz-slider-options="valoresSliderOptions.optionsNaipe">
                 </div>
                 <button ng-click="setCoringa()">Ok</button>
-            </div>
+            </div> -->
             <div>
-                <h3>{{jogador.totalPontos}}</h3>
-                Pontuações: {{jogador.pontuacoes}}
+                <h2 class="label label-danger" ng-show="dadosPartida.activePlayer === jogadorId">Turno</h2>
+                <h3>{{tabuleiroPartida.totalPontos}}</h3>
+                Pontuações: {{tabuleiroPartida.pontuacoes}}
+                <br/>
+                <label>{{tabuleiroPartida.jogador.name}}</label>
+            </div>
+            <table>
+                  <thead>
+                      <th ng-repeat="coluna in tabuleiroPartida.colunas">
+                          {{$index}}
+                      </th>
+                  </thead>
+                  <tbody>
+                      <tr ng-repeat="coluna in tabuleiroPartida.colunas"  >
+                          <td class="tile" ng-repeat="linha in coluna.linhas" jqyoui-droppable="{onDrop: 'cardPlaced(e)'}" 
+                          data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' data-number="{{linha.number}}" data-player_id={{tabuleiroPartida.jogador.id}} >
+                              <div ng-repeat="carta in linha.data"   ng-class="{ 'red' : isRed(carta)}" class="carta" >                                            
+                                  <span class="valor" >{{carta.valor}}</span>
+                                  <span class="naipe">{{carta.naipe.simbolo}}</span>
+                              </div>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+        </div>
+    </div>
+    <div style="float:right; padding: 35px">
+        <div  class="painel-jogador" ng-repeat="tabuleiro in tabuleiros track by $index" ng-show="tabuleiro.visible">
+            <!-- <div>
+                <div>
+                    <p>Valor: {{tabuleiro.pick}}</p>
+                    <rzslider rz-slider-model="tabuleiro.pick.valor" rz-slider-options="valoresSliderOptions.optionsValor">
+                </div>
+                <div>
+                    <p>Naipe</p>
+                    <rzslider rz-slider-model="tabuleiro.pick.naipe" rz-slider-options="valoresSliderOptions.optionsNaipe">
+                </div>
+                <button ng-click="setCoringa()">Ok</button>
+            </div> -->
+            <div>
+                <h2 class="label label-danger" ng-show="dadosPartida.activePlayer === tabuleiro.jogador.id">Turno</h2>
+                <h3>{{tabuleiro.totalPontos}}</h3>
+                Pontuações: {{tabuleiro.pontuacoes}}
+                <br/>
+                <label>{{tabuleiro.jogador.name}}</label>
             </div>
             <table>
             
                     <thead>
-                        <th ng-repeat="coluna in jogador.colunas">
+                        <th ng-repeat="coluna in tabuleiro.colunas">
                             {{$index}}
                         </th>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="coluna in jogador.colunas"  >
+                        <tr ng-repeat="coluna in tabuleiro.colunas"  >
                             <td class="tile" ng-repeat="linha in coluna.linhas" jqyoui-droppable="{onDrop: 'cardPlaced(e)'}" 
-                            data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' data-number="{{linha.number}}" data-player_id={{jogador.id}} >
+                            data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' data-number="{{linha.number}}" data-player_id={{tabuleiro.jogador.id}} >
                                 <div ng-repeat="carta in linha.data"   ng-class="{ 'red' : isRed(carta)}" class="carta" >                                            
                                     <span class="valor" >{{carta.valor}}</span>
                                     <span class="naipe">{{carta.naipe.simbolo}}</span>
@@ -50,7 +100,511 @@
                     </tbody>
                 </table>
         </div>
-        
     </div>
     {{lista}}
 </div>
+<script>
+    kronenApp.controller('controller',function($scope, $http){
+  
+  var naipes = [{simbolo: '♣',texto: 'paus'},
+  {simbolo: '♦',texto: 'ouro'},
+  {simbolo: '♥',texto: 'coracao' },
+  {simbolo: '♠',texto: 'espadilha'}];
+  var valores = [ '2','3','4','5','6','7','8','9','10','J', 'Q','K','A'];
+
+  $scope.valoresSliderOptions = {
+    optionsValor: {
+      stepsArray: valores
+    },
+    optionsNaipe: {
+      stepsArray: naipes.map((x) =>{
+        return x.simbolo
+      })
+    }
+  };
+  $scope.cartas = [];
+  indexCartas = 0;
+  $scope.lista = [];
+  $scope.cartas_roubadas = [];
+  $scope.dadosPartida = {};
+  $scope.jogadorId = "@Model.JogadorId";
+  $scope.gameId = @Model.GameId;
+  
+
+  loadGame();
+
+  setInterval(function(){
+    if($scope.dadosPartida != null && $scope.dadosPartida.activePlayer !== $scope.jogadorId){
+      loadGame();
+    }
+  }, 3000);
+  
+  $scope.setCarta = function(carta){
+    if(carta.especial){
+      if(carta.valor === 'thief'){
+        $scope.isHoldingThief = true;
+      }
+      else if(carta.valor === 'joker'){
+        $scope.isHoldingJoker = true;
+      }
+    }else{
+      $scope.isHoldingThief = false;
+      $scope.isHoldingJoker = false;
+    }
+    console.log(carta);
+  }
+
+  function captureErrors(ret){
+    console.log(ret);
+  }
+
+  function gerarPainelJogador(dadosPartida){
+    console.log(dadosPartida);
+    $scope.tabuleiros = dadosPartida.tabuleiros.map((x) =>{
+      x.getNaipe = getNaipe;
+      x.getCarta = getCarta;
+      x.pontuacoes = [];
+      x.colunas = x.colunas.map((col) =>{
+        col.linhas = col.linhas.map((lin) => {
+          lin.data = lin.data.map((card) => {
+            card.isNextOrPrevious = isNextOrPrevious;
+            return card;
+          });
+          return lin;
+        });
+        return col;
+      });
+      if(x.jogador.id === $scope.jogadorId){
+        $scope.tabuleiroPartida = x;
+        x.visible = false;
+      }else{
+        x.visible = true;
+      }
+      return x;
+    });
+    calculateResults();
+  }
+
+  function loadGame(){
+        $http.post('/api/game', {
+            PlayerId : $scope.jogadorId,
+            GameId : $scope.gameId
+        }).then(function(ret){
+            if(ret != null && ret.data.errors == null || ret.data.errors.length == 0){
+                $scope.dadosPartida = ret.data.dadosPartida;
+                $scope.cartas = $scope.dadosPartida.cartasVisiveis.map((x) =>{
+                    x.isNextOrPrevious = isNextOrPrevious;
+                    x.drag = true;
+                    return x;
+                });
+                gerarPainelJogador($scope.dadosPartida);
+            }else{
+                catpureErrors(ret);
+            }
+        }).catch(function(ret){
+            captureErrors(ret);    
+        });
+  }
+    function generateNumeric(v){
+      if(v === 'J'){
+        return 11;
+      }
+      else if(v === 'Q'){
+        return 12;
+      }
+      else if(v === 'K'){
+        return 13;
+      }
+      else if(v === 'A'){
+        return 14;
+      }else{
+        return Number(v);
+      }
+
+    }
+
+    $scope.isRed = function(carta){
+      if(carta == null || carta.naipe == null){
+        return false;
+      }
+      if(carta.naipe.simbolo != null){
+        if(carta.naipe.simbolo.includes(['♦']) || carta.naipe.simbolo.includes(['♥']))
+          return true;
+      }
+      else if(carta.naipe.includes(['♦']) || carta.naipe.includes(['♥']))
+        return true;
+      else
+        return false;
+    }
+    $scope.cardPlaced = function(e){
+      console.log(e);
+      if($scope.isHoldingThief){
+        var posicao_roubada = Number(e.target.dataset.number == null ? 0 : e.target.dataset.number); //posição roubada
+        var vitima_id = Number(e.target.dataset.player_id  == null ? 0 : e.target.dataset.player_id); //posição roubada
+        var jogador = $scope.tabuleiros.find((x) => {
+          if(x.jogador.id === vitima_id){
+            return x;
+          }
+        });
+        jogador.colunas.forEach((col) => {
+          col.linhas.forEach((lin) => {
+            if(lin.number === posicao_roubada){
+              $scope.cartas_roubadas = [];
+              $scope.cartas_roubadas.push(lin.data[0]);
+              lin.data.splice(0,2);
+              $scope.isHoldingThief = false;
+              $scope.isPlacingThief = true;
+            }
+          })
+        });
+
+      }else if($scope.isPlacingThief){
+        $scope.cartas_roubadas = [];
+        $scope.isPlacingThief = false;
+      }else if($scope.isHoldingJoker){
+        var poslicao_coringa = Number(e.target.dataset.number == null ? 0 : e.target.dataset.number); //posição roubada
+        var jogador_id = e.target.dataset.player_id  == null ? 0 : e.target.dataset.player_id; //posição roubada
+        var jogador = $scope.tabuleiros.find((x) => {
+          if(x.jogador.id === jogador_id){
+            return x;
+          }
+        });
+
+      jogador.colunas.forEach((col) => {
+          col.linhas.forEach((lin) => {
+              if(lin.number === poslicao_coringa){
+                      $scope.coringaSet = lin.data[0];
+                      $scope.isHoldingJoker = false;
+                  }
+              });
+        });
+        console.log(jogador);
+      }else{
+          var jogadorId = e.target.dataset.player_id  == null ? 0 : e.target.dataset.player_id; //posição roubada
+          var jogador = $scope.tabuleiros.find((x) => {
+              if(x.jogador.id === jogadorId){
+              return x;
+              }
+          });
+          if(jogador != null){
+              updateServer(jogador);
+          }
+      }
+      calculateResults()
+      return null;
+    }
+
+    $scope.setCoringa = function(){
+        $scope.coringaSet.valor = jogador.pick.valor;
+        $scope.coringaSet.valorNumerico = generateNumeric(jogador.pick.valor);
+        $scope.coringaSet.naipe = convertNaipeToObject(jogador.pick.naipe);
+        $scope.cardPlaced();
+    }
+    function calculateResults(){  
+      $scope.tabuleiros.forEach(t => {
+        t.pontuacoes = [];
+        t.totalPontos = 0;
+        validaNaipes(t);
+        validaTrincaDupla(t);
+        validaSequencias(t);
+        t.pontuacoes.forEach(p => {
+          t.totalPontos += p.valor
+        })
+      });
+    }
+    function updateServer(dto){
+        $http.post('/api/game/send',{
+            jogadorId  : dto.jogador.id,
+            gameId : $scope.gameId,
+            colunas : dto.colunas
+        }).then(function(ret){
+            if(ret.data.success){
+                console.log("jogada enviada com sucesso");
+                loadGame();
+            }
+            else{
+                captureErrors(ret);                
+            }
+        }).catch(function(ret){
+            captureErrors(ret);
+        });
+    }
+    function catpureErrors(ret){
+        console.log(ret);
+        if(ret.data.errors != null && ret.data.errors){
+            ret.data.errors.map((x) => {
+                alert(x.message);
+            })
+        }
+    }
+    function isEmpty(obj) {
+      for(var key in obj) {
+          if(obj.hasOwnProperty(key))
+              return false;
+      }
+      return true;
+    }
+    function getNaipe(x, y){
+      if(this.colunas[y] != null && this.colunas[y].linhas[x] != null && this.colunas[y].linhas[x].data != null && this.colunas[y].linhas[x].data.length > 0){
+        var naipe = this.colunas[y].linhas[x].data[0].naipe;
+        if(naipe != null)
+        {
+          if(naipe.simbolo != null){
+            return this.colunas[y].linhas[x].data[0].naipe.texto;
+          }
+        }
+        return null;
+      }
+    }
+    function getCarta(x, y){
+      if(this.colunas[y] != null && this.colunas[y].linhas[x] != null && this.colunas[y].linhas[x].data != null && this.colunas[y].linhas[x].data.length > 0){
+        return this.colunas[y].linhas[x].data[0];
+      }
+      return {
+        valor: null
+      };
+    }
+    function validaNaipes(jogador){
+      for(var x = 0; x < 3; x++){
+          if(jogador.getNaipe(x,0) != null && jogador.getNaipe(x,0) === jogador.getNaipe(x, 1) && jogador.getNaipe(x, 1) === jogador.getNaipe(x, 2)){
+            jogador.pontuacoes.push({
+              flush: true,
+              valor: 350
+            })
+          }
+          if(jogador.getNaipe(0,x) != null && jogador.getNaipe(0,x) === jogador.getNaipe(1, x) && jogador.getNaipe(1, x)=== jogador.getNaipe(2, x)){
+            jogador.pontuacoes.push({
+              flush: true,
+              valor: 350
+            })
+          }
+        }
+        if(jogador.getNaipe(0,0) != null && jogador.getNaipe(0,0) === jogador.getNaipe(1, 1) && jogador.getNaipe(1, 1)=== jogador.getNaipe(2, 2)){
+            jogador.pontuacoes.push({
+              flush: true,
+              valor: 350
+            })
+          }
+          if(jogador.getNaipe(0,2) != null && jogador.getNaipe(0,2) === jogador.getNaipe(1, 1) && jogador.getNaipe(1, 1)=== jogador.getNaipe(2, 0)){
+            jogador.pontuacoes.push({
+              flush: true,
+              valor: 350
+            })
+          }
+    }
+    function validaTrincaDupla(jogador){
+      for(var x = 0; x < 3; x++){
+        var carta_a = jogador.getCarta(x, 0);
+        var carta_b = jogador.getCarta(x, 1);
+        var carta_c = jogador.getCarta(x, 2);
+        // Vertical
+        var cartasValidas = isCard(carta_a) && isCard(carta_b) && isCard(carta_c);
+        if(cartasValidas && carta_a.valor == carta_b.valor && carta_b.valor === carta_c.valor){
+          jogador.pontuacoes.push({
+            trinca: true,
+            valor: 750
+          })
+        }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
+          jogador.pontuacoes.push({
+            dupla: true,
+            valor: 200
+          })
+        }
+        
+        carta_a = jogador.getCarta(0, x);
+        carta_b = jogador.getCarta(1, x);
+        carta_c = jogador.getCarta(2, x);
+        var cartasValidas = isCard(carta_a) && isCard(carta_b) && isCard(carta_c);
+        // Horizontal
+        if(cartasValidas && carta_a.valor == carta_b.valor && carta_b.valor === carta_c.valor){
+          jogador.pontuacoes.push({
+              trinca: true,
+              valor: 750
+            })
+        }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
+          jogador.pontuacoes.push({
+            dupla: true,
+            valor: 200
+          })
+        }
+      }
+      //Diagonal A
+      cartasValidas = isCard(jogador.getCarta(0,0)) && isCard(jogador.getCarta(1,1)) && isCard(jogador.getCarta(2,2));
+      var carta_a = jogador.getCarta(0, 0);
+      var carta_b = jogador.getCarta(1, 1);
+      var carta_c = jogador.getCarta(2, 2);
+      if(cartasValidas && carta_a.valor === carta_b.valor && carta_b.valor === carta_c.valor){
+          jogador.pontuacoes.push({
+            trinca: true,
+            valor: 750
+          })
+      }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
+          jogador.pontuacoes.push({
+            dupla: true,
+            valor: 200
+          })
+      }
+      //Diagonal B
+      cartasValidas = isCard(jogador.getCarta(0,2)) && isCard(jogador.getCarta(1,1)) && isCard(jogador.getCarta(2,0));
+      carta_a = jogador.getCarta(0, 2);
+      carta_b = jogador.getCarta(1, 1);
+      carta_c = jogador.getCarta(2, 0);
+      if(cartasValidas && carta_a.valor === carta_b.valor && carta_b.valor === carta_c.valor){
+          jogador.pontuacoes.push({
+            trinca: true,
+            valor: 750
+          })
+        }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
+          jogador.pontuacoes.push({
+            dupla: true,
+            valor: 200
+          })
+        }
+    }
+    function validaSequencias(jogador){
+      for(var x = 0; x < 3; x++){
+        var carta_a = jogador.getCarta(x, 0);
+        var carta_b = jogador.getCarta(x, 1);
+        var carta_c = jogador.getCarta(x, 2);
+        // Vertical
+        if(isCard(carta_a) && isCard(carta_b) && isCard(carta_c)){
+          if(isSequence([carta_a, carta_b, carta_c])) {
+            if(isRoyal([carta_a,carta_b,carta_c])){
+              jogador.pontuacoes.push({
+                royal_straight_flush: true,
+                valor: 1150
+              });
+            }else{
+              jogador.pontuacoes.push({
+                straight: true,
+                valor: 450
+              });
+            }
+          }
+        }
+        carta_a = jogador.getCarta(0, x);
+        carta_b = jogador.getCarta(1, x);
+        carta_c = jogador.getCarta(2, x);
+        // Horizontal
+        if(isCard(carta_a) && isCard(carta_b) && isCard(carta_c)){
+          if(isSequence([carta_a, carta_b, carta_c])){
+            if(isRoyal([carta_a,carta_b,carta_c])){
+              jogador.pontuacoes.push({
+                royal_straight_flush: true,
+                valor: 1150
+              });
+            }else{
+              jogador.pontuacoes.push({
+                straight: true,
+                valor: 450
+              });
+            }
+          }
+        }
+      }
+      //Diagonal A
+      cartasValidas = isCard(jogador.getCarta(0,0)) && isCard(jogador.getCarta(1,1)) && isCard(jogador.getCarta(2,2));
+      var carta_a = jogador.getCarta(0, 0);
+      var carta_b = jogador.getCarta(1, 1);
+      var carta_c = jogador.getCarta(2, 2);
+      if(cartasValidas && isSequence([carta_a, carta_b, carta_c])){
+        if(isRoyal([carta_a,carta_b,carta_c])){
+          jogador.pontuacoes.push({
+            royal_straight_flush: true,
+            valor: 1150
+          });
+        }else{
+          jogador.pontuacoes.push({
+            straight: true,
+            valor: 450
+          });
+        }
+      }
+      //Diagonal B
+      cartasValidas = isCard(jogador.getCarta(0,2)) && isCard(jogador.getCarta(1,1)) && isCard(jogador.getCarta(2,0));
+      carta_a = jogador.getCarta(0, 2);
+      carta_b = jogador.getCarta(1, 1);
+      carta_c = jogador.getCarta(2, 0);
+      if(cartasValidas && isSequence([carta_a, carta_b, carta_c])){
+          if(isRoyal([carta_a,carta_b,carta_c])){
+            jogador.pontuacoes.push({
+              royal_straight_flush: true,
+              valor: 1150
+            });
+          }else{
+            jogador.pontuacoes.push({
+              straight: true,
+              valor: 450
+            });
+          }
+        }
+    }
+    function convertNaipeToObject(naipe){
+      return naipes.filter((x) => {
+        if(x.simbolo === naipe){
+          return x;
+        }
+      })[0];
+    }
+    function isRoyal(cartas){
+      var isKing = false;
+      var isQueen = false;
+      var isAce = false;
+      var isSameNaipe = true;
+      for(var x = 0; x < cartas.length; x++){
+        var c = cartas[x];
+        if(x > 0){
+          if(c.naipe !== cartas[x-1].naipe)
+            isSameNaipe = false;
+        }
+        if(c.valor === "K"){
+          isKing = true;
+        }
+        else if(c.valor === "Q"){
+          isQueen = true;
+        }else if(c.valor === "A"){
+          isAce = true;
+        }
+      }
+      if(isKing && isQueen && isAce && isSameNaipe){
+        return true;
+      }
+    }
+    function isSequence(cartas){
+      
+      for(var x = 0; x < cartas.length; x++){
+        var c = cartas[x];
+        if(!!c){
+          for(var y = 0; y < cartas.length; y++){
+            if(y != x){
+              var c2 = cartas[y];
+              if(c.isNextOrPrevious(c2)){
+                for(var z = 0; z < cartas.length; z++){
+                  if(z != x && z != y){
+                    c3 = cartas[z];
+                    if(c2.isNextOrPrevious(c3) && c2.isNextOrPrevious(c) && c3.valor != c.valor){
+                      return true;
+                    }else if(c.isNextOrPrevious(c3) && c.isNextOrPrevious(c2) && c3.valor != c2.valor){
+                      return true;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    function isTwoCardsEqual(carta_a,carta_b,carta_c){
+      return !!carta_a.valor && carta_a.valor === carta_b.valor ||
+          !!carta_b.valor && carta_b.valor === carta_c.valor ||
+          !!carta_c.valor && carta_a.valor === carta_c.valor;
+    }
+    function isNextOrPrevious(carta){
+      return this.valorNumerico + 1 == carta.valorNumerico || this.valorNumerico - 1 == carta.valorNumerico;
+    }
+    function isCard(carta){
+    return carta != null && carta.valor != null;
+  }
+})
+</script>

@@ -24,11 +24,15 @@
 <script>
     kronenApp.controller('gameRoomController',function($scope, $http){
         $scope.gameId = @Model.gameId;
-        $scope.playerId = '@Model.playerId';
+        $scope.player = {
+            id: '@Model.playerId',
+            name: '@Model.chatRoom.userName'
+        };
         $scope.numberPlayers = @Model.numberPlayers;
         var onGoing = false;
         $scope.ready = false;
 
+        consultaStatusJogadores();
         setInterval(function(){
             if(!onGoing)
                 consultaStatusJogadores();
@@ -43,9 +47,9 @@
                     var jogadoresProntos = $scope.jogadores.filter((x) =>{
                         return x.isReady == true;
                     });
-                    if(jogadoresProntos.length === $scope.numberPlayers)
+                    if(jogadoresProntos.length === $scope.numberPlayers || ret.data.gameReady)
                     {
-                        window.location = "/game/" + $scope.gameId;
+                        window.location = "/game/" + $scope.gameId + "/" + $scope.player.id;
                     }
                 }else{
                     alert(ret.Errors);
@@ -57,7 +61,7 @@
             debugger;
             $http.post('/api/room/',
             {
-                PlayerId: $scope.playerId,
+                Player: $scope.player,
                 RoomId: $scope.gameId,
                 status: status
             }).then(function(ret){
@@ -73,6 +77,3 @@
            
     });
 </script>
-
-//todo: Criar painel para mostrar jogadores online
-//todo: Criar botão para "I'm Ready"

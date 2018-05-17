@@ -1,4 +1,4 @@
-namespace Kronen.web.ViewModels
+namespace Kronen.ViewModels
 {
     public class VMGame
     {

@@ -6,5 +6,6 @@ namespace Kronen.web.Services.Contract
     {
         DtoCreateDeckResponse GerarBaralho(DtoCreateDeckRequest dto);
         DtoGerarUniqueKeyGameResponse GetUniqueKey(DtoGerarUniqueKeyGameRequest dto);
+        DtoSendPlayResponse SendPlay(DtoSendPlayRequest dto);
     }
 }

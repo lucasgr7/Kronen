@@ -17,8 +17,8 @@
 }
 .tile{
     border:2px solid rgb(80, 74, 74);
-    padding: 50px;
-    margin: 12px;
+    padding: 25px;
+    margin: 15px;
     align-content: center;
 }
 body {
