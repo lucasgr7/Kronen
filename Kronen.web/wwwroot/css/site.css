@@ -3,23 +3,36 @@
     width: 55px;
     height: 76px;
     cursor: pointer;
+    border-radius: 10%;
+    background: white;
+    margin: 10px;
+    box-shadow: 2px 2px 5px black;
 }
 .valor{
-    float:right;
-    padding: 5px;
+    position: absolute;
+    padding-left: 38px;
+    padding-top: 4px;
 }
 .naipe{
     padding: 3px;
-    font-size: 55px;
+    font-size: 65px;
 }
 .red{
     color: red;
 }
 .tile{
     border:2px solid rgb(80, 74, 74);
-    padding: 25px;
+    padding: 50px;
+    padding-top: 60px;
     margin: 15px;
     align-content: center;
+}
+.tile_full{
+    padding: 12px;
+}
+.table_game{
+    border-spacing: 3px;
+    border-collapse: separate;
 }
 body {
     padding-top: 50px;

@@ -2,13 +2,16 @@
 @using Kronen.Models
 
 @model VMGame
-todo: Royal Straight zuado Resolver bug das cartas repetidas
-todo: Bloquear cartas para quem não é o turno
+todo: Apresentar ultima carta jogada <br/>
+todo: Logar vencedor da partida <br />
+todo: Colocar chat na partida <br />
+todo: Bug após iniciado o jogo ele não sai da lista inicial do lobby <br />
+todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled) <br/>
 
 <div ng-controller="controller">
-    <div style="float:left" ng-disabled="dadosPartida.activePlayer !== jogadorId">
+    <div style="float:left" >
             <div ng-repeat="carta in cartas track by $index" ng-show="cartas_roubadas.length === 0"  ng-class="{ 'red' : isRed(carta)}" 
-            class="carta" data-drag="{{carta.drag}}" ng-model="cartas" data-jqyoui-options="{revert: 'invalid'}" 
+            class="carta" data-drag="isMyTurn()" ng-model="cartas" data-jqyoui-options="{revert: 'invalid'}" 
             jqyoui-draggable="{index: {{$index}},placeholder:true,animate:true}" ng-mouseenter="setCarta(carta)" >
                     <span class="valor" >{{carta.valor}}</span>
                     <span class="naipe">{{carta.naipe.simbolo}}</span>
@@ -40,7 +43,7 @@ todo: Bloquear cartas para quem não é o turno
                 <br/>
                 <label>{{tabuleiroPartida.jogador.name}}</label>
             </div>
-            <table>
+            <table class="table_game">
                   <thead>
                       <th ng-repeat="coluna in tabuleiroPartida.colunas">
                           {{$index}}
@@ -49,7 +52,7 @@ todo: Bloquear cartas para quem não é o turno
                   <tbody>
                       <tr ng-repeat="coluna in tabuleiroPartida.colunas"  >
                           <td class="tile" ng-repeat="linha in coluna.linhas" jqyoui-droppable="{onDrop: 'cardPlaced(e)'}" 
-                          data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' data-number="{{linha.number}}" data-player_id={{tabuleiroPartida.jogador.id}} >
+                          data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' ng-class="{'tile_full' : linha.data.length > 0}" data-number="{{linha.number}}" data-player_id={{tabuleiroPartida.jogador.id}} >
                               <div ng-repeat="carta in linha.data"   ng-class="{ 'red' : isRed(carta)}" class="carta" >                                            
                                   <span class="valor" >{{carta.valor}}</span>
                                   <span class="naipe">{{carta.naipe.simbolo}}</span>
@@ -80,7 +83,7 @@ todo: Bloquear cartas para quem não é o turno
                 <br/>
                 <label>{{tabuleiro.jogador.name}}</label>
             </div>
-            <table>
+            <table  class="table_game">
             
                     <thead>
                         <th ng-repeat="coluna in tabuleiro.colunas">
@@ -90,7 +93,8 @@ todo: Bloquear cartas para quem não é o turno
                     <tbody>
                         <tr ng-repeat="coluna in tabuleiro.colunas"  >
                             <td class="tile" ng-repeat="linha in coluna.linhas" jqyoui-droppable="{onDrop: 'cardPlaced(e)'}" 
-                            data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' data-number="{{linha.number}}" data-player_id={{tabuleiro.jogador.id}} >
+                            data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' ng-class="{'tile_full' : linha.data.length > 0}"
+                           data-number="{{linha.number}}" data-player_id={{tabuleiro.jogador.id}} >
                                 <div ng-repeat="carta in linha.data"   ng-class="{ 'red' : isRed(carta)}" class="carta" >                                            
                                     <span class="valor" >{{carta.valor}}</span>
                                     <span class="naipe">{{carta.naipe.simbolo}}</span>
@@ -134,7 +138,7 @@ todo: Bloquear cartas para quem não é o turno
   loadGame();
 
   setInterval(function(){
-    if($scope.dadosPartida != null && $scope.dadosPartida.activePlayer !== $scope.jogadorId){
+    if(!$scope.isMyTurn()){
       loadGame();
     }
   }, 3000);
@@ -156,6 +160,10 @@ todo: Bloquear cartas para quem não é o turno
 
   function captureErrors(ret){
     console.log(ret);
+  }
+
+  $scope.isMyTurn = function(){
+    return $scope.dadosPartida != null && $scope.dadosPartida.activePlayer === $scope.jogadorId;
   }
 
   function gerarPainelJogador(dadosPartida){
@@ -554,7 +562,7 @@ todo: Bloquear cartas para quem não é o turno
       for(var x = 0; x < cartas.length; x++){
         var c = cartas[x];
         if(x > 0){
-          if(c.naipe !== cartas[x-1].naipe)
+          if(c.naipe.texto !== cartas[x-1].naipe.texto)
             isSameNaipe = false;
         }
         if(c.valor === "K"){
