@@ -38,6 +38,13 @@ body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
+.icon-coroa{
+    width: 75px;
+    height: 70px;
+    position: absolute;
+    margin-left: 100px;
+    margin-top: -40px;
+}
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
@@ -50,6 +57,9 @@ body {
 .carousel-caption p {
     font-size: 20px;
     line-height: 1.4;
+}
+.painel-jogador{
+    max-width: 400px;
 }
 
 /* Make .svg files in the carousel display properly in older browsers */

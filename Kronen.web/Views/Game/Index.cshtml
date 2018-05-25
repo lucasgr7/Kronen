@@ -2,11 +2,13 @@
 @using Kronen.Models
 
 @model VMGame
+todo: Colocar link mostrar as jogadas no tabuleiro respectivo
 todo: Apresentar ultima carta jogada <br/>
-todo: Logar vencedor da partida <br />
 todo: Colocar chat na partida <br />
 todo: Bug após iniciado o jogo ele não sai da lista inicial do lobby <br />
 todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled) <br/>
+Colocar um fundo de tela <br/>
+todo: Logar vencedor da partida <br />
 
 <div ng-controller="controller">
     <div style="float:left" >
@@ -37,11 +39,18 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
                 <button ng-click="setCoringa()">Ok</button>
             </div> -->
             <div>
-                <h2 class="label label-danger" ng-show="dadosPartida.activePlayer === jogadorId">Turno</h2>
-                <h3>{{tabuleiroPartida.totalPontos}}</h3>
-                Pontuações: {{tabuleiroPartida.pontuacoes}}
-                <br/>
-                <label>{{tabuleiroPartida.jogador.name}}</label>
+                <div class="row">
+                  <img ng-show="dadosPartida.vitorioso === jogadorId" src="http://rs36.pbsrc.com/albums/e1/stultus-tigris/tumblr_m6ync6F5YS1roozkr_zpsgdutaj5f.gif~c200" class="icon-coroa">
+                </div>
+                <div class="row">
+                  <h2 class="label label-danger" ng-show="dadosPartida.activePlayer === jogadorId">Turno</h2>
+                  <h3>{{tabuleiroPartida.totalPontos}}</h3>
+                  <span ng-repeat="ponto in tabuleiroPartida.pontuacoes">
+                    <label style="background-color: {{ponto.color}}" class="label label-default">{{ponto.text}}</label>
+                  </span>
+                  <br/>
+                  <label>{{tabuleiroPartida.jogador.name}}</label>
+                </div>
             </div>
             <table class="table_game">
                   <thead>
@@ -77,11 +86,18 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
                 <button ng-click="setCoringa()">Ok</button>
             </div> -->
             <div>
-                <h2 class="label label-danger" ng-show="dadosPartida.activePlayer === tabuleiro.jogador.id">Turno</h2>
-                <h3>{{tabuleiro.totalPontos}}</h3>
-                Pontuações: {{tabuleiro.pontuacoes}}
-                <br/>
-                <label>{{tabuleiro.jogador.name}}</label>
+                <div class="row">
+                  <img ng-show="dadosPartida.vitorioso === tabuleiro.jogador.id" src="http://rs36.pbsrc.com/albums/e1/stultus-tigris/tumblr_m6ync6F5YS1roozkr_zpsgdutaj5f.gif~c200" class="icon-coroa">
+                </div>
+                <div class="row">
+                  <h2 class="label label-danger" ng-show="dadosPartida.activePlayer === tabuleiro.jogador.id">Turno</h2>
+                  <h3>{{tabuleiro.totalPontos}}</h3>
+                  <span ng-repeat="ponto in tabuleiro.pontuacoes">
+                    <label style="background-color: {{ponto.color}}" class="label label-default">{{ponto.text}}</label>
+                  </span>
+                  <br/>
+                  <label>{{tabuleiro.jogador.name}}</label>  
+                </div>
             </div>
             <table  class="table_game">
             
@@ -133,6 +149,36 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
   $scope.dadosPartida = {};
   $scope.jogadorId = "@Model.JogadorId";
   $scope.gameId = @Model.GameId;
+  var trinca = {
+    trinca: true,
+    valor: 750,
+    text: 'Trinca',
+    color: 'green'
+  };
+  var dupla = {
+    dupla: true,
+    valor: 200,
+    text: 'Dupla',
+    color: 'blue'
+  };
+  var royal = {
+    royal_straight_flush: true,
+    valor: 1150,
+    text: "Royal Straight",
+    color: "black"
+  };
+  var straight = {
+    straight: true,
+    valor: 450,
+    text: "Straight",
+    color: "red"
+  };
+  var flush = {
+    flush: true,
+    valor: 350,
+    text: 'Flush',
+    color: 'orange'
+  }
   
 
   loadGame();
@@ -309,6 +355,7 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
         $scope.cardPlaced();
     }
     function calculateResults(){  
+      var maxPontuacao = 0;
       $scope.tabuleiros.forEach(t => {
         t.pontuacoes = [];
         t.totalPontos = 0;
@@ -317,7 +364,11 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
         validaSequencias(t);
         t.pontuacoes.forEach(p => {
           t.totalPontos += p.valor
-        })
+        });
+        if(t.totalPontos > 0 && t.totalPontos > maxPontuacao){
+          $scope.dadosPartida.vitorioso = t.jogador.id;
+          maxPontuacao = t.totalPontos;
+        }
       });
     }
     function updateServer(dto){
@@ -375,29 +426,17 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
     function validaNaipes(jogador){
       for(var x = 0; x < 3; x++){
           if(jogador.getNaipe(x,0) != null && jogador.getNaipe(x,0) === jogador.getNaipe(x, 1) && jogador.getNaipe(x, 1) === jogador.getNaipe(x, 2)){
-            jogador.pontuacoes.push({
-              flush: true,
-              valor: 350
-            })
+            jogador.pontuacoes.push(flush);
           }
           if(jogador.getNaipe(0,x) != null && jogador.getNaipe(0,x) === jogador.getNaipe(1, x) && jogador.getNaipe(1, x)=== jogador.getNaipe(2, x)){
-            jogador.pontuacoes.push({
-              flush: true,
-              valor: 350
-            })
+            jogador.pontuacoes.push(flush);
           }
         }
         if(jogador.getNaipe(0,0) != null && jogador.getNaipe(0,0) === jogador.getNaipe(1, 1) && jogador.getNaipe(1, 1)=== jogador.getNaipe(2, 2)){
-            jogador.pontuacoes.push({
-              flush: true,
-              valor: 350
-            })
+            jogador.pontuacoes.push(flush);
           }
           if(jogador.getNaipe(0,2) != null && jogador.getNaipe(0,2) === jogador.getNaipe(1, 1) && jogador.getNaipe(1, 1)=== jogador.getNaipe(2, 0)){
-            jogador.pontuacoes.push({
-              flush: true,
-              valor: 350
-            })
+            jogador.pontuacoes.push(flush);
           }
     }
     function validaTrincaDupla(jogador){
@@ -408,15 +447,9 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
         // Vertical
         var cartasValidas = isCard(carta_a) && isCard(carta_b) && isCard(carta_c);
         if(cartasValidas && carta_a.valor == carta_b.valor && carta_b.valor === carta_c.valor){
-          jogador.pontuacoes.push({
-            trinca: true,
-            valor: 750
-          })
+          jogador.pontuacoes.push(trinca);
         }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
-          jogador.pontuacoes.push({
-            dupla: true,
-            valor: 200
-          })
+          jogador.pontuacoes.push(dupla);
         }
         
         carta_a = jogador.getCarta(0, x);
@@ -425,15 +458,9 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
         var cartasValidas = isCard(carta_a) && isCard(carta_b) && isCard(carta_c);
         // Horizontal
         if(cartasValidas && carta_a.valor == carta_b.valor && carta_b.valor === carta_c.valor){
-          jogador.pontuacoes.push({
-              trinca: true,
-              valor: 750
-            })
+          jogador.pontuacoes.push(trinca);
         }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
-          jogador.pontuacoes.push({
-            dupla: true,
-            valor: 200
-          })
+          jogador.pontuacoes.push(dupla);
         }
       }
       //Diagonal A
@@ -442,15 +469,9 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
       var carta_b = jogador.getCarta(1, 1);
       var carta_c = jogador.getCarta(2, 2);
       if(cartasValidas && carta_a.valor === carta_b.valor && carta_b.valor === carta_c.valor){
-          jogador.pontuacoes.push({
-            trinca: true,
-            valor: 750
-          })
+          jogador.pontuacoes.push(trinca);
       }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
-          jogador.pontuacoes.push({
-            dupla: true,
-            valor: 200
-          })
+          jogador.pontuacoes.push(dupla);
       }
       //Diagonal B
       cartasValidas = isCard(jogador.getCarta(0,2)) && isCard(jogador.getCarta(1,1)) && isCard(jogador.getCarta(2,0));
@@ -458,15 +479,9 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
       carta_b = jogador.getCarta(1, 1);
       carta_c = jogador.getCarta(2, 0);
       if(cartasValidas && carta_a.valor === carta_b.valor && carta_b.valor === carta_c.valor){
-          jogador.pontuacoes.push({
-            trinca: true,
-            valor: 750
-          })
+          jogador.pontuacoes.push(trinca);
         }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
-          jogador.pontuacoes.push({
-            dupla: true,
-            valor: 200
-          })
+          jogador.pontuacoes.push(dupla);
         }
     }
     function validaSequencias(jogador){
@@ -478,15 +493,9 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
         if(isCard(carta_a) && isCard(carta_b) && isCard(carta_c)){
           if(isSequence([carta_a, carta_b, carta_c])) {
             if(isRoyal([carta_a,carta_b,carta_c])){
-              jogador.pontuacoes.push({
-                royal_straight_flush: true,
-                valor: 1150
-              });
+              jogador.pontuacoes.push(royal);
             }else{
-              jogador.pontuacoes.push({
-                straight: true,
-                valor: 450
-              });
+              jogador.pontuacoes.push(straight);
             }
           }
         }
@@ -497,15 +506,9 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
         if(isCard(carta_a) && isCard(carta_b) && isCard(carta_c)){
           if(isSequence([carta_a, carta_b, carta_c])){
             if(isRoyal([carta_a,carta_b,carta_c])){
-              jogador.pontuacoes.push({
-                royal_straight_flush: true,
-                valor: 1150
-              });
+              jogador.pontuacoes.push(royal);
             }else{
-              jogador.pontuacoes.push({
-                straight: true,
-                valor: 450
-              });
+              jogador.pontuacoes.push(straight);
             }
           }
         }
@@ -517,15 +520,9 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
       var carta_c = jogador.getCarta(2, 2);
       if(cartasValidas && isSequence([carta_a, carta_b, carta_c])){
         if(isRoyal([carta_a,carta_b,carta_c])){
-          jogador.pontuacoes.push({
-            royal_straight_flush: true,
-            valor: 1150
-          });
+          jogador.pontuacoes.push(royal);
         }else{
-          jogador.pontuacoes.push({
-            straight: true,
-            valor: 450
-          });
+          jogador.pontuacoes.push(straight);
         }
       }
       //Diagonal B
@@ -535,15 +532,9 @@ todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled
       carta_c = jogador.getCarta(2, 0);
       if(cartasValidas && isSequence([carta_a, carta_b, carta_c])){
           if(isRoyal([carta_a,carta_b,carta_c])){
-            jogador.pontuacoes.push({
-              royal_straight_flush: true,
-              valor: 1150
-            });
+            jogador.pontuacoes.push(royal);
           }else{
-            jogador.pontuacoes.push({
-              straight: true,
-              valor: 450
-            });
+            jogador.pontuacoes.push(straight);
           }
         }
     }
