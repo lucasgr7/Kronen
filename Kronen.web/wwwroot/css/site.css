@@ -66,10 +66,16 @@ body {
 .carousel-inner .item img[src$=".svg"] {
     width: 100%;
 }
+.combo-showing{
+    background: #d24531;
+}
 
 /* QR code generator */
 #qrCode {
     margin: 15px;
+}
+.label{
+    cursor: pointer;
 }
 
 /* Hide/rearrange for smaller screens */

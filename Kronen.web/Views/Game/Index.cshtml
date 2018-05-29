@@ -2,7 +2,6 @@
 @using Kronen.Models
 
 @model VMGame
-todo: Colocar link mostrar as jogadas no tabuleiro respectivo
 todo: Apresentar ultima carta jogada <br/>
 todo: Colocar chat na partida <br />
 todo: Bug após iniciado o jogo ele não sai da lista inicial do lobby <br />
@@ -46,7 +45,7 @@ todo: Logar vencedor da partida <br />
                   <h2 class="label label-danger" ng-show="dadosPartida.activePlayer === jogadorId">Turno</h2>
                   <h3>{{tabuleiroPartida.totalPontos}}</h3>
                   <span ng-repeat="ponto in tabuleiroPartida.pontuacoes">
-                    <label style="background-color: {{ponto.color}}" class="label label-default">{{ponto.text}}</label>
+                    <label style="background-color: {{ponto.color}}" ng-mouseenter="showCombo(ponto)" ng-mouseleave="showCombo()" class="label label-default">{{ponto.text}}</label>
                   </span>
                   <br/>
                   <label>{{tabuleiroPartida.jogador.name}}</label>
@@ -61,7 +60,9 @@ todo: Logar vencedor da partida <br />
                   <tbody>
                       <tr ng-repeat="coluna in tabuleiroPartida.colunas"  >
                           <td class="tile" ng-repeat="linha in coluna.linhas" jqyoui-droppable="{onDrop: 'cardPlaced(e)'}" 
-                          data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' ng-class="{'tile_full' : linha.data.length > 0}" data-number="{{linha.number}}" data-player_id={{tabuleiroPartida.jogador.id}} >
+                          data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' 
+                          ng-class="{'tile_full' : linha.data.length > 0, 'combo-showing' : isComboShowing(linha)}" 
+                          data-number="{{linha.number}}" data-player_id={{tabuleiroPartida.jogador.id}} >
                               <div ng-repeat="carta in linha.data"   ng-class="{ 'red' : isRed(carta)}" class="carta" >                                            
                                   <span class="valor" >{{carta.valor}}</span>
                                   <span class="naipe">{{carta.naipe.simbolo}}</span>
@@ -93,7 +94,7 @@ todo: Logar vencedor da partida <br />
                   <h2 class="label label-danger" ng-show="dadosPartida.activePlayer === tabuleiro.jogador.id">Turno</h2>
                   <h3>{{tabuleiro.totalPontos}}</h3>
                   <span ng-repeat="ponto in tabuleiro.pontuacoes">
-                    <label style="background-color: {{ponto.color}}" class="label label-default">{{ponto.text}}</label>
+                    <label style="background-color: {{ponto.color}}" ng-mouseenter="showCombo(ponto)" ng-mouseleave="showCombo()" class="label label-default">{{ponto.text}}</label>
                   </span>
                   <br/>
                   <label>{{tabuleiro.jogador.name}}</label>  
@@ -109,7 +110,8 @@ todo: Logar vencedor da partida <br />
                     <tbody>
                         <tr ng-repeat="coluna in tabuleiro.colunas"  >
                             <td class="tile" ng-repeat="linha in coluna.linhas" jqyoui-droppable="{onDrop: 'cardPlaced(e)'}" 
-                            data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' ng-class="{'tile_full' : linha.data.length > 0}"
+                            data-drop="isHoldingThief || linha.data.length === 0" ng-model='linha.data' 
+                            ng-class="{'tile_full' : linha.data.length > 0, 'combo-showing' : isComboShowing(linha)}"
                            data-number="{{linha.number}}" data-player_id={{tabuleiro.jogador.id}} >
                                 <div ng-repeat="carta in linha.data"   ng-class="{ 'red' : isRed(carta)}" class="carta" >                                            
                                     <span class="valor" >{{carta.valor}}</span>
@@ -149,35 +151,52 @@ todo: Logar vencedor da partida <br />
   $scope.dadosPartida = {};
   $scope.jogadorId = "@Model.JogadorId";
   $scope.gameId = @Model.GameId;
-  var trinca = {
-    trinca: true,
-    valor: 750,
-    text: 'Trinca',
-    color: 'green'
-  };
-  var dupla = {
-    dupla: true,
-    valor: 200,
-    text: 'Dupla',
-    color: 'blue'
-  };
-  var royal = {
-    royal_straight_flush: true,
-    valor: 1150,
-    text: "Royal Straight",
-    color: "black"
-  };
-  var straight = {
-    straight: true,
-    valor: 450,
-    text: "Straight",
-    color: "red"
-  };
-  var flush = {
-    flush: true,
-    valor: 350,
-    text: 'Flush',
-    color: 'orange'
+  var indice = 0;
+  var Trinca = function(){
+    return {
+      trinca: true,
+      valor: 750,
+      text: 'Trinca',
+      color: 'green',
+      id: getNextInt()
+    };
+  }
+  var Dupla = function(){
+      return {
+        dupla: true,
+        valor: 200,
+        text: 'Dupla',
+        color: 'blue',
+        id: getNextInt()
+      };
+    }
+
+  var Flush = function(){
+    return {
+      flush: true,
+      valor: 350,
+      text: 'Flush',
+      color: 'orange',
+      id: getNextInt()
+    }
+  }
+  var Royal = function(){
+    return {
+      royal_straight_flush: true,
+      valor: 1150,
+      text: "Royal Straight",
+      color: "black",
+      id: getNextInt()
+    };
+  }
+  var Straight = function(){
+    return {
+      straight: true,
+      valor: 450,
+      text: "Straight",
+      color: "red",
+      id: getNextInt()
+    };
   }
   
 
@@ -187,7 +206,7 @@ todo: Logar vencedor da partida <br />
     if(!$scope.isMyTurn()){
       loadGame();
     }
-  }, 3000);
+  }, 10000);
   
   $scope.setCarta = function(carta){
     if(carta.especial){
@@ -213,7 +232,6 @@ todo: Logar vencedor da partida <br />
   }
 
   function gerarPainelJogador(dadosPartida){
-    console.log(dadosPartida);
     $scope.tabuleiros = dadosPartida.tabuleiros.map((x) =>{
       x.getNaipe = getNaipe;
       x.getCarta = getCarta;
@@ -347,6 +365,31 @@ todo: Logar vencedor da partida <br />
       calculateResults()
       return null;
     }
+    $scope.showCombo = function(ponto){
+      if(ponto != null){
+        console.log(ponto);
+        $scope.pontoShowing = ponto.id;
+      }else{
+        $scope.pontoShowing = null;
+      }
+    }
+    $scope.isComboShowing = function(linha){
+      if($scope.pontoShowing != null){
+        for(var x=0;x<linha.data.length;x++){
+          var carta = linha.data[x];
+          console.log(carta);
+          if(carta.idsCombos != null && carta.idsCombos.length > 0){
+            if(carta.idsCombos.find((x) => {
+              if(x === $scope.pontoShowing){
+                return x;
+              }
+            })){
+              return true;
+            }
+          }
+        }
+      }
+    }
 
     $scope.setCoringa = function(){
         $scope.coringaSet.valor = jogador.pick.valor;
@@ -425,30 +468,38 @@ todo: Logar vencedor da partida <br />
     }
     function validaNaipes(jogador){
       for(var x = 0; x < 3; x++){
-          if(jogador.getNaipe(x,0) != null && jogador.getNaipe(x,0) === jogador.getNaipe(x, 1) && jogador.getNaipe(x, 1) === jogador.getNaipe(x, 2)){
-            jogador.pontuacoes.push(flush);
-          }
-          if(jogador.getNaipe(0,x) != null && jogador.getNaipe(0,x) === jogador.getNaipe(1, x) && jogador.getNaipe(1, x)=== jogador.getNaipe(2, x)){
-            jogador.pontuacoes.push(flush);
-          }
+        let flush = new Flush();
+        if(jogador.getNaipe(x,0) != null && jogador.getNaipe(x,0) === jogador.getNaipe(x, 1) && jogador.getNaipe(x, 1) === jogador.getNaipe(x, 2)){
+          saveCombinationsCombos([jogador.getCarta(x, 0), jogador.getCarta(x, 1), jogador.getCarta(x, 2)], flush.id);
+          jogador.pontuacoes.push(flush);
         }
-        if(jogador.getNaipe(0,0) != null && jogador.getNaipe(0,0) === jogador.getNaipe(1, 1) && jogador.getNaipe(1, 1)=== jogador.getNaipe(2, 2)){
-            jogador.pontuacoes.push(flush);
-          }
-          if(jogador.getNaipe(0,2) != null && jogador.getNaipe(0,2) === jogador.getNaipe(1, 1) && jogador.getNaipe(1, 1)=== jogador.getNaipe(2, 0)){
-            jogador.pontuacoes.push(flush);
-          }
+        if(jogador.getNaipe(0,x) != null && jogador.getNaipe(0,x) === jogador.getNaipe(1, x) && jogador.getNaipe(1, x)=== jogador.getNaipe(2, x)){
+          saveCombinationsCombos([jogador.getCarta(0, x), jogador.getCarta(1, x), jogador.getCarta(2, x)], flush.id);
+          jogador.pontuacoes.push(flush);
+        }
+      }
+      if(jogador.getNaipe(0,0) != null && jogador.getNaipe(0,0) === jogador.getNaipe(1, 1) && jogador.getNaipe(1, 1)=== jogador.getNaipe(2, 2)){
+          saveCombinationsCombos([jogador.getCarta(0, 0), jogador.getCarta(1, 1), jogador.getCarta(2, 2)], flush.id);
+          jogador.pontuacoes.push(flush);
+        }
+      if(jogador.getNaipe(0,2) != null && jogador.getNaipe(0,2) === jogador.getNaipe(1, 1) && jogador.getNaipe(1, 1)=== jogador.getNaipe(2, 0)){
+        saveCombinationsCombos([jogador.getCarta(0, 2), jogador.getCarta(1, 1), jogador.getCarta(2, 0)], flush.id);
+        jogador.pontuacoes.push(flush);
+      }
     }
     function validaTrincaDupla(jogador){
       for(var x = 0; x < 3; x++){
+        var trinca = new Trinca();
+        var dupla = new Dupla();
         var carta_a = jogador.getCarta(x, 0);
         var carta_b = jogador.getCarta(x, 1);
         var carta_c = jogador.getCarta(x, 2);
         // Vertical
         var cartasValidas = isCard(carta_a) && isCard(carta_b) && isCard(carta_c);
         if(cartasValidas && carta_a.valor == carta_b.valor && carta_b.valor === carta_c.valor){
+          saveCombinationsCombos([carta_a, carta_b, carta_c], trinca.id);
           jogador.pontuacoes.push(trinca);
-        }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
+        }else if(isTwoCardsEqual(carta_a,carta_b,carta_c, dupla.id)){
           jogador.pontuacoes.push(dupla);
         }
         
@@ -458,8 +509,9 @@ todo: Logar vencedor da partida <br />
         var cartasValidas = isCard(carta_a) && isCard(carta_b) && isCard(carta_c);
         // Horizontal
         if(cartasValidas && carta_a.valor == carta_b.valor && carta_b.valor === carta_c.valor){
+          saveCombinationsCombos([carta_a, carta_b, carta_c], trinca.id);
           jogador.pontuacoes.push(trinca);
-        }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
+        }else if(isTwoCardsEqual(carta_a,carta_b,carta_c, dupla.id)){
           jogador.pontuacoes.push(dupla);
         }
       }
@@ -469,8 +521,9 @@ todo: Logar vencedor da partida <br />
       var carta_b = jogador.getCarta(1, 1);
       var carta_c = jogador.getCarta(2, 2);
       if(cartasValidas && carta_a.valor === carta_b.valor && carta_b.valor === carta_c.valor){
+          saveCombinationsCombos([carta_a, carta_b, carta_c], trinca.id);
           jogador.pontuacoes.push(trinca);
-      }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
+      }else if(isTwoCardsEqual(carta_a,carta_b,carta_c, dupla.id)){
           jogador.pontuacoes.push(dupla);
       }
       //Diagonal B
@@ -479,13 +532,16 @@ todo: Logar vencedor da partida <br />
       carta_b = jogador.getCarta(1, 1);
       carta_c = jogador.getCarta(2, 0);
       if(cartasValidas && carta_a.valor === carta_b.valor && carta_b.valor === carta_c.valor){
+          saveCombinationsCombos([carta_a, carta_b, carta_c], trinca.id);
           jogador.pontuacoes.push(trinca);
-        }else if(isTwoCardsEqual(carta_a,carta_b,carta_c)){
+        }else if(isTwoCardsEqual(carta_a,carta_b,carta_c, dupla.id)){
           jogador.pontuacoes.push(dupla);
         }
     }
     function validaSequencias(jogador){
       for(var x = 0; x < 3; x++){
+        var royal = new Royal();
+        var straight = new Straight();
         var carta_a = jogador.getCarta(x, 0);
         var carta_b = jogador.getCarta(x, 1);
         var carta_c = jogador.getCarta(x, 2);
@@ -493,8 +549,10 @@ todo: Logar vencedor da partida <br />
         if(isCard(carta_a) && isCard(carta_b) && isCard(carta_c)){
           if(isSequence([carta_a, carta_b, carta_c])) {
             if(isRoyal([carta_a,carta_b,carta_c])){
+              saveCombinationsCombos([carta_a, carta_b, carta_c], royal.id);
               jogador.pontuacoes.push(royal);
             }else{
+              saveCombinationsCombos([carta_a, carta_b, carta_c], straight.id);
               jogador.pontuacoes.push(straight);
             }
           }
@@ -506,8 +564,10 @@ todo: Logar vencedor da partida <br />
         if(isCard(carta_a) && isCard(carta_b) && isCard(carta_c)){
           if(isSequence([carta_a, carta_b, carta_c])){
             if(isRoyal([carta_a,carta_b,carta_c])){
+              saveCombinationsCombos([carta_a, carta_b, carta_c], royal.id);
               jogador.pontuacoes.push(royal);
             }else{
+              saveCombinationsCombos([carta_a, carta_b, carta_c], straight.id);
               jogador.pontuacoes.push(straight);
             }
           }
@@ -520,8 +580,10 @@ todo: Logar vencedor da partida <br />
       var carta_c = jogador.getCarta(2, 2);
       if(cartasValidas && isSequence([carta_a, carta_b, carta_c])){
         if(isRoyal([carta_a,carta_b,carta_c])){
+          saveCombinationsCombos([carta_a, carta_b, carta_c], royal.id);
           jogador.pontuacoes.push(royal);
         }else{
+          saveCombinationsCombos([carta_a, carta_b, carta_c], straight.id);
           jogador.pontuacoes.push(straight);
         }
       }
@@ -532,8 +594,10 @@ todo: Logar vencedor da partida <br />
       carta_c = jogador.getCarta(2, 0);
       if(cartasValidas && isSequence([carta_a, carta_b, carta_c])){
           if(isRoyal([carta_a,carta_b,carta_c])){
+            saveCombinationsCombos([carta_a, carta_b, carta_c], royal.id);
             jogador.pontuacoes.push(royal);
           }else{
+            saveCombinationsCombos([carta_a, carta_b, carta_c], straight.id);
             jogador.pontuacoes.push(straight);
           }
         }
@@ -594,16 +658,50 @@ todo: Logar vencedor da partida <br />
         }
       }
     }
-    function isTwoCardsEqual(carta_a,carta_b,carta_c){
-      return !!carta_a.valor && carta_a.valor === carta_b.valor ||
-          !!carta_b.valor && carta_b.valor === carta_c.valor ||
-          !!carta_c.valor && carta_a.valor === carta_c.valor;
+    function isTwoCardsEqual(carta_a,carta_b,carta_c, idCombo){
+      if(!!carta_a.valor && carta_a.valor === carta_b.valor){
+        saveCombinationCombo(carta_a, idCombo);
+        saveCombinationCombo(carta_b, idCombo);
+        return true;
+      }else if(!!carta_b.valor && carta_b.valor === carta_c.valor){
+        saveCombinationCombo(carta_b, idCombo);
+        saveCombinationCombo(carta_c, idCombo);
+        return true;
+      }else if(!!carta_c.valor && carta_a.valor === carta_c.valor){
+        saveCombinationCombo(carta_a, idCombo);
+        saveCombinationCombo(carta_c, idCombo);
+        return true;
+      }
+      else{
+        return false;
+      }
+      
     }
     function isNextOrPrevious(carta){
       return this.valorNumerico + 1 == carta.valorNumerico || this.valorNumerico - 1 == carta.valorNumerico;
     }
     function isCard(carta){
-    return carta != null && carta.valor != null;
-  }
+      return carta != null && carta.valor != null;
+    }
+    function saveCombinationCombo(carta, id){
+      if(id == null){
+        return;
+      }
+      if(carta.idsCombos == null){
+        carta.idsCombos = [];
+      }
+      carta.idsCombos.push(id);
+    }
+    function saveCombinationsCombos(cartas, id){
+      if(cartas != null && cartas.length > 0){
+        for(var x=0;x<cartas.length;x++){
+          saveCombinationCombo(cartas[x], id); 
+        }
+      }
+    }
+    function getNextInt(){
+      indice += 1;
+      return indice;
+    }
 })
 </script>
