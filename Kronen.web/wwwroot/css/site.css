@@ -85,3 +85,7 @@ body {
         display: none;
     }
 }
+
+.tile.ui-state-disabled{
+    opacity: 1;
+}
