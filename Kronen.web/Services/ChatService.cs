@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Kronen.web.Persistence;
 using Kronen.web.Persistence.Domain;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -14,6 +15,7 @@ namespace Kronen.web.Services
     {
         private static List<WebSocket> LobbySockets {get;set;}
         public static List<RoomWebSocket> RoomsSockets {get;set;}
+        
         public static async Task Echo(HttpContext context, WebSocket webSocket)
         {
             if(LobbySockets==null)
@@ -36,12 +38,19 @@ namespace Kronen.web.Services
         {
             if(RoomsSockets==null)
                 RoomsSockets = new List<RoomWebSocket>();
+                
+            var player = GameRepository.ActivePlayers.Where(x => x.id == idPlayer).FirstOrDefault();
+            if(player == null){
+                throw new Exception("Jogador desconectado ou não existe");
+            }
+
             var roomSocket = new RoomWebSocket(){
                 socket = webSocket,
                 RoomId = idRoom,
                 Player = new RoomPlayer{
                     Id = idPlayer,
-                    IsReady = false
+                    IsReady = false,
+                    Name = player.name
                 }
             };
             RoomsSockets.Add(roomSocket);

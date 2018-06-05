@@ -2,12 +2,16 @@
 @using Kronen.Models
 
 @model VMGame
-todo: Apresentar ultima carta jogada <br/>
-todo: Colocar chat na partida <br />
 todo: Bug após iniciado o jogo ele não sai da lista inicial do lobby <br />
 todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled) <br/>
-Colocar um fundo de tela <br/>
+todo: Colocar um fundo de tela <br/>
 todo: Logar vencedor da partida <br />
+todo: Apresentar ultima carta jogada <br/>
+todo: Ajustar css to chat <br/>
+todo: Colocar animação de quando é "seu turno"<br/>
+todo: Bug de quando os jogadores empatam ele deixa um como vitorioso <br/>
+todo: Adicionar cartas bandido de volta
+
 
 <div ng-controller="controller">
     <div style="float:left" >
@@ -125,6 +129,7 @@ todo: Logar vencedor da partida <br />
     </div>
     {{lista}}
 </div>
+@Html.Partial("../Shared/_Chat.cshtml", @Model.chatRoom)
 <script>
     kronenApp.controller('controller',function($scope, $http){
   

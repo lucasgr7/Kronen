@@ -1,7 +1,10 @@
 using System.Linq;
 using Kronen.ViewModels;
 using Kronen.web.Persistence;
+using Kronen.web.Persistence.Domain;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Kronen.web.Controllers
 {
@@ -10,9 +13,16 @@ namespace Kronen.web.Controllers
         
         [Route("game/{id}/{jogadorId}")]
         public IActionResult Game(long id, string jogadorId){
+            Player user = JsonConvert.DeserializeObject<Player>(HttpContext.Session.GetString("user"));
+            
             VMGame vm = new VMGame(){
                 JogadorId = jogadorId,
-                GameId  = id
+                GameId  = id,
+                chatRoom = new VMChat(){
+                    urlSocket = "/ws/room/"+ id.ToString() + "/" + user.id,
+                    chatName = "Lobby",
+                    userName = user.name
+                }
             };
             return View("Index", vm);
 
