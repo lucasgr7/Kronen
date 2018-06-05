@@ -24,6 +24,10 @@ namespace Kronen.web.Controllers
                     userName = user.name
                 }
             };
+            var gameRoom = GameRepository.gameRooms.Where(x => x.gameId == id).FirstOrDefault();
+            if(gameRoom != null){
+                gameRoom.isPlaying = true;
+            }
             return View("Index", vm);
 
         }
