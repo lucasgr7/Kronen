@@ -2,12 +2,18 @@
 @using Kronen.Models
 
 @model VMGame
-todo: Bug após iniciado o jogo ele não sai da lista inicial do lobby <br />
-todo: REmover tom acizentado das cartas dos tabuleiros (Acredito que é disabled) <br/>
-todo: Colocar um fundo de tela <br/>
+todo: Remover barra no topo e fixar no canto esquerdo para sair <br/>
+todo: Ajustar css to chat <br/>
+todo: Carregar imagem do fundo no projeto em si <br/>
+todo: Colocar o chat fixo na esquerda <br/>
+todo: corrigir bug das pontuações: 
+Duplicates in a repeater are not allowed. Use 'track by' expression to specify unique keys. Repeater: ponto in tabuleiro.pontuacoes, Duplicate key: object:13343, Duplicate value: {"dupla":true,"valor":200,"text":"Dupla","color":"blue","id":4402,"$$hashKey":"object:13343"}<br/>
+todo: Colocar animação de "Próximo turno de..."<br />
+todo: Colocar carta ladrão de volta <br/>
+todo: Colocar carta do coringda de volta <br/>
+todo: Colocar som de turno passou <br />
 todo: Logar vencedor da partida <br />
 todo: Apresentar ultima carta jogada <br/>
-todo: Ajustar css to chat <br/>
 todo: Colocar animação de quando é "seu turno"<br/>
 todo: Bug de quando os jogadores empatam ele deixa um como vitorioso <br/>
 todo: Adicionar cartas bandido de volta
@@ -48,7 +54,7 @@ todo: Adicionar cartas bandido de volta
                 <div class="row">
                   <h2 class="label label-danger" ng-show="dadosPartida.activePlayer === jogadorId">Turno</h2>
                   <h3>{{tabuleiroPartida.totalPontos}}</h3>
-                  <span ng-repeat="ponto in tabuleiroPartida.pontuacoes">
+                  <span ng-repeat="ponto in tabuleiroPartida.pontuacoes track by ponto.id">
                     <label style="background-color: {{ponto.color}}" ng-mouseenter="showCombo(ponto)" ng-mouseleave="showCombo()" class="label label-default">{{ponto.text}}</label>
                   </span>
                   <br/>
@@ -97,7 +103,7 @@ todo: Adicionar cartas bandido de volta
                 <div class="row">
                   <h2 class="label label-danger" ng-show="dadosPartida.activePlayer === tabuleiro.jogador.id">Turno</h2>
                   <h3>{{tabuleiro.totalPontos}}</h3>
-                  <span ng-repeat="ponto in tabuleiro.pontuacoes">
+                  <span ng-repeat="ponto in tabuleiro.pontuacoes  track by ponto.id">
                     <label style="background-color: {{ponto.color}}" ng-mouseenter="showCombo(ponto)" ng-mouseleave="showCombo()" class="label label-default">{{ponto.text}}</label>
                   </span>
                   <br/>

@@ -1,5 +1,6 @@
 ﻿.carta{
     border: 1px solid black;
+    color: black;
     width: 55px;
     height: 76px;
     cursor: pointer;
@@ -21,7 +22,7 @@
     color: red;
 }
 .tile{
-    border:2px solid rgb(80, 74, 74);
+    border:2px solid rgb(240, 255, 113);
     padding: 50px;
     padding-top: 60px;
     margin: 15px;
@@ -88,4 +89,8 @@ body {
 
 .tile.ui-state-disabled{
     opacity: 1;
+}
+body{
+    background-image: url('https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fwalldiskpaper.com%2Fwp-content%2Fuploads%2F2014%2F11%2FGreen-Background-Free-Downloads.jpg&f=1');
+    color: white;
 }
