@@ -2,8 +2,9 @@
 @using Kronen.Models
 
 @model VMLobby
+@Html.Partial("../Shared/_Chat.cshtml", @Model.chatRoom)
 
-<div ng-controller="lobbyGameController">
+<div ng-controller="lobbyGameController" class="container-tela">
     <h2>Bem vindo ao Kronen</h2>
     <p>Escolha um jogo</p>
     <table class="table table-bordered">
@@ -47,4 +48,3 @@
 </script>
 
 @Html.Partial("../Shared/_ModalCriarJogo.cshtml")
-@Html.Partial("../Shared/_Chat.cshtml", @Model.chatRoom)
