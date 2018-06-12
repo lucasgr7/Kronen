@@ -2,12 +2,7 @@
 @using Kronen.Models
 
 @model VMGame
-todo: Ajustar css do chat room;
-todo: Esconder chat da partida quando alguém estiver segurando uma carta
-todo: Carregar imagem do fundo no projeto em si <br/>
-todo: Colocar o chat fixo na esquerda <br/>
-todo: corrigir bug das pontuações: 
-Duplicates in a repeater are not allowed. Use 'track by' expression to specify unique keys. Repeater: ponto in tabuleiro.pontuacoes, Duplicate key: object:13343, Duplicate value: {"dupla":true,"valor":200,"text":"Dupla","color":"blue","id":4402,"$$hashKey":"object:13343"}<br/>
+<!-- 
 todo: Colocar animação de "Próximo turno de..."<br />
 todo: Colocar carta ladrão de volta <br/>
 todo: Colocar carta do coringda de volta <br/>
@@ -16,14 +11,36 @@ todo: Logar vencedor da partida <br />
 todo: Apresentar ultima carta jogada <br/>
 todo: Colocar animação de quando é "seu turno"<br/>
 todo: Bug de quando os jogadores empatam ele deixa um como vitorioso <br/>
-todo: Adicionar cartas bandido de volta
+todo: Adicionar cartas bandido de volta -->
 
 
 <div ng-controller="controller">
+  <div style="
+    color: white;
+#divElement{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    width: 100px;
+    height: 100px;  }&#8203;
+    position: absolute;
+    top: 13%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    width: 100px;
+    height: 100px;
+    poistion: fixed;
+    position: fixed;
+">
+        <h1>Seu turno!</h1>
+    </div>
     <div style="float:left" >
             <div ng-repeat="carta in cartas track by $index" ng-show="cartas_roubadas.length === 0"  ng-class="{ 'red' : isRed(carta)}" 
             class="carta" data-drag="isMyTurn()" ng-model="cartas" data-jqyoui-options="{revert: 'invalid'}" 
-            jqyoui-draggable="{index: {{$index}},placeholder:true,animate:true}" ng-mouseenter="setCarta(carta)" >
+            jqyoui-draggable="{index: {{$index}},placeholder:true,animate:true}" ng-mouseenter="setCarta(carta)" ng-mouseleave="setCarta()" >
                     <span class="valor" >{{carta.valor}}</span>
                     <span class="naipe">{{carta.naipe.simbolo}}</span>
             </div>
@@ -220,16 +237,21 @@ todo: Adicionar cartas bandido de volta
   }, 10000);
   
   $scope.setCarta = function(carta){
-    if(carta.especial){
-      if(carta.valor === 'thief'){
-        $scope.isHoldingThief = true;
-      }
-      else if(carta.valor === 'joker'){
-        $scope.isHoldingJoker = true;
-      }
+    if(carta == null){
+      $(".chat-window").show();  
     }else{
-      $scope.isHoldingThief = false;
-      $scope.isHoldingJoker = false;
+      $(".chat-window").hide();
+      if(carta.especial){
+        if(carta.valor === 'thief'){
+          $scope.isHoldingThief = true;
+        }
+        else if(carta.valor === 'joker'){
+          $scope.isHoldingJoker = true;
+        }
+      }else{
+        $scope.isHoldingThief = false;
+        $scope.isHoldingJoker = false;
+      }
     }
     console.log(carta);
   }
@@ -489,10 +511,13 @@ todo: Adicionar cartas bandido de volta
           jogador.pontuacoes.push(flush);
         }
       }
+      let flush = new Flush();
       if(jogador.getNaipe(0,0) != null && jogador.getNaipe(0,0) === jogador.getNaipe(1, 1) && jogador.getNaipe(1, 1)=== jogador.getNaipe(2, 2)){
           saveCombinationsCombos([jogador.getCarta(0, 0), jogador.getCarta(1, 1), jogador.getCarta(2, 2)], flush.id);
           jogador.pontuacoes.push(flush);
         }
+        
+      flush = new Flush();
       if(jogador.getNaipe(0,2) != null && jogador.getNaipe(0,2) === jogador.getNaipe(1, 1) && jogador.getNaipe(1, 1)=== jogador.getNaipe(2, 0)){
         saveCombinationsCombos([jogador.getCarta(0, 2), jogador.getCarta(1, 1), jogador.getCarta(2, 0)], flush.id);
         jogador.pontuacoes.push(flush);
