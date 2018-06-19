@@ -16,9 +16,6 @@ namespace Kronen
         private static string port = "5000";
         public static void Main(string[] args)
         {
-            if(Environment.GetEnvironmentVariable("PORT") != null){
-                port = Environment.GetEnvironmentVariable("PORT").ToString();
-            }
             BuildWebHost(args).Run();
         }
 
@@ -26,6 +23,7 @@ namespace Kronen
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .UseUrls("http://0.0.0.0:" + port)
+                .UseConfiguration(new ConfigurationBuilder().AddCommandLine(args).Build())
                 .Build();
     }
 }
