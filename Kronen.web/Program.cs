@@ -12,14 +12,20 @@ namespace Kronen
 {
     public class Program
     {
+
+        private static string port = "5000";
         public static void Main(string[] args)
         {
+            if(Environment.GetEnvironmentVariable("port") != null){
+                port = Environment.GetEnvironmentVariable("port").ToString();
+            }
             BuildWebHost(args).Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .UseUrls("http://0.0.0.0:" + port)
                 .Build();
     }
 }
