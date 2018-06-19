@@ -22,7 +22,7 @@ namespace Kronen
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseUrls("http://0.0.0.0:" + port)
+                .UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS"))
                 .UseConfiguration(new ConfigurationBuilder().AddCommandLine(args).Build())
                 .Build();
     }
