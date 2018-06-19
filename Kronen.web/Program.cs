@@ -16,8 +16,8 @@ namespace Kronen
         private static string port = "5000";
         public static void Main(string[] args)
         {
-            if(Environment.GetEnvironmentVariable("port") != null){
-                port = Environment.GetEnvironmentVariable("port").ToString();
+            if(Environment.GetEnvironmentVariable("PORT") != null){
+                port = Environment.GetEnvironmentVariable("PORT").ToString();
             }
             BuildWebHost(args).Run();
         }
